@@ -9,7 +9,7 @@
     <note type="tip"><p>A tip with a paragraph.</p><p>And a second one.</p></note>
     <note type="warning">Be careful.</note>
     <note type="other" othertype="Heads-up">Custom type.</note>
-    <fig><title>Architecture</title><image href="../images/diagram.png" width="120"><alt>Diagram</alt></image></fig>
+    <fig><title>Kitteh</title><image href="../images/kitteh.png" width="120"><alt>Diagram</alt></image></fig>
     <section id="concepts"><title>Key concepts</title>
       <dl><dlentry><dt>Part</dt><dd>A raw input.</dd></dlentry></dl>
       <p>See <xref href="guide/install.dita#install/prereq"/> and <xref href="reference.dita"/>.</p>

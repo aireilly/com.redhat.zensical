@@ -17,7 +17,7 @@ jobs:
 
       - name: Package DITA-OT plug-in
         run: >-
-          zip -r com.example.zensical.zip
+          zip -r com.redhat.zensical.zip
           plugin.xml build_zensical.xml conductor.xml
           xsl python resources sample
           README.md INTERCHANGE.md LICENSE
@@ -27,6 +27,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: >-
           gh release create "$GITHUB_REF_NAME"
-          com.example.zensical.zip
+          com.redhat.zensical.zip
           --verify-tag
           --generate-notes

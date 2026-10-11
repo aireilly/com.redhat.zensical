@@ -20,6 +20,7 @@ import html
 import json
 import posixpath
 import re
+from urllib.parse import quote, unquote, urlsplit, urlunsplit
 import xml.etree.ElementTree as ET
 
 from . import highlight, theme
@@ -47,11 +48,18 @@ def markdown_path(page_path: str) -> str:
     return posixpath.splitext(page_path)[0] + ".md"
 
 
+def _page_route(page_path: str) -> str:
+    route = posixpath.splitext(page_path)[0]
+    if posixpath.basename(route) == "index":
+        route = posixpath.dirname(route)
+    return route or "."
+
+
 # ============ Page ============
 
 def page_markdown(page, site, options: Options, highlighter: highlight.Highlighter | None) -> str:
     root = theme.adapt(page.element(), admonitions=options.admonitions, tables=options.theme_tables)
-    _rewrite_links(root, page.path, site.pages)
+    _rewrite_links(root, page.path, site.pages, site.assets)
     code_html = _prepare_code(root, page.path, options, highlighter)
 
     body = []
@@ -85,20 +93,43 @@ def front_matter(meta: dict, extra: dict | None = None) -> str:
     return "\n".join(lines)
 
 
-def _rewrite_links(root, page_path, pages):
-    """Links between pages end in .html in the interchange; Zensical resolves .md links."""
+def _rewrite_links(root, page_path, pages, assets):
+    """Rewrite page links and local image URLs for Zensical's directory-style page URLs."""
     base = posixpath.dirname(page_path)
     for a in root.iter("a"):
         href = a.get("href")
         if not href or href.startswith(("#", "/")) or _SCHEME.match(href):
             continue
-        path, hash_, fragment = href.partition("#")
-        target = posixpath.normpath(posixpath.join(base, path))
+        url = urlsplit(href)
+        target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
         if target in pages:
-            new_href = markdown_path(path) + hash_ + fragment
+            target_route = _page_route(target)
+            relative = posixpath.relpath(target_route, start=_page_route(page_path))
+            relative = "./" if relative == "." else relative.rstrip("/") + "/"
+            route_url = quote(relative, safe="/:@-._~!$&'()*+,;=")
+            new_href = urlunsplit(("", "", route_url, url.query, url.fragment))
             a.set("href", new_href)
             if len(a) == 0 and (a.text or "").strip() == href:
                 a.text = new_href  # DITA-OT's fallback text for an untitled target is the href
+
+    asset_paths = set(assets)
+    # Non-index pages are served from an extra directory, such as /topics/overview/.
+    page_url_dir = _page_route(page_path)
+    for image in root.iter("img"):
+        src = image.get("src")
+        if not src:
+            continue
+        url = urlsplit(src)
+        if url.scheme or url.netloc or not url.path or url.path.startswith("/"):
+            continue
+        target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
+        if target not in asset_paths:
+            continue
+        relative = posixpath.relpath(target, start=page_url_dir)
+        rewritten = urlunsplit((
+            "", "", quote(relative, safe="/:@-._~!$&'()*+,;="), url.query, url.fragment
+        ))
+        image.set("src", rewritten)
 
 
 def _prepare_code(root, page_path, options, highlighter):

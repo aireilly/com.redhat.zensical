@@ -1,6 +1,6 @@
 """Write Zensical sources (docs/ and zensical.toml) from the DITA interchange.
 
-Run by the com.example.zensical DITA-OT plug-in with the Python Zensical is
+Run by the com.redhat.zensical DITA-OT plug-in with the Python Zensical is
 installed in. Can also be run by hand on an existing interchange folder:
 
     python write_site.py --interchange out/interchange --docs out/docs --config out/zensical.toml

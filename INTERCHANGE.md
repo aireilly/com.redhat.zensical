@@ -8,7 +8,7 @@ interchange/
   content/
     topics/overview.html        page fragment (XHTML5)
     topics/overview.json        page metadata
-    images/diagram.png          assets, at the paths the fragments reference
+    images/kitteh.png          assets, at the paths the fragments reference
 ```
 
 Paths are POSIX, relative to `content/`. A page is any `*.html` file with a sibling `*.json` whose `format` is `dita-interchange-page/1`. Every other file in `content/` is an asset.

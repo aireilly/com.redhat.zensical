@@ -23,14 +23,13 @@ retries = 3</codeblock></fig>
       <codeblock outputclass="language-xml"><![CDATA[<topic id="t">
   <title>Hello &amp; welcome</title>
 </topic>]]></codeblock>
-      <codeblock outputclass="language-dita"><![CDATA[<codeblock outputclass="language-python">print("hi")</codeblock>]]></codeblock>
+      <codeblock outputclass="language-xml"><![CDATA[<codeblock outputclass="language-python">print("hi")</codeblock>]]></codeblock>
     </section>
     <section><title>Edge cases</title>
       <codeblock outputclass="language-bash">widget --mode <varname>MODE</varname></codeblock>
       <codeblock>Plain text, no language</codeblock>
       <codeblock>Type <b>exactly</b> this: <userinput>yes</userinput></codeblock>
       <codeblock outputclass="language-bash">see <xref href="guide/install.dita">Install Widget</xref></codeblock>
-      <codeblock outputclass="language-klingon">tlhIngan Hol</codeblock>
     </section>
   </refbody>
 </reference>

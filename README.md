@@ -1,6 +1,6 @@
 # DITA-OT Zensical plug-in
 
-Publishes a DITA map as a [Zensical](https://zensical.org) documentation site.
+Use this plug-in to publish a DITA map as a [Zensical](https://zensical.org) documentation site.
 
 Tested with DITA-OT 4.3.4, Zensical 0.0.69, and pymdownx 11.0 and 12.2.
 
@@ -10,20 +10,20 @@ You need [DITA-OT](https://www.dita-ot.org/download) 4.x with Java 17 or later, 
 
 1. Install Zensical and the plug-in (once):
 
-   ```sh
+   ```bash
    pip install zensical
-   dita install com.example.zensical.zip
+   dita install com.redhat.zensical.zip
    ```
 
 2. Generate the Zensical project from your map:
 
-   ```sh
+   ```bash
    dita -i guide.ditamap -f zensical -o out -Dzensical.stage=sources
    ```
 
 3. Serve it:
 
-   ```sh
+   ```bash
    cd out
    zensical serve --open
    ```
@@ -34,11 +34,25 @@ To see edits, leave `zensical serve` running and repeat step 2 in a second termi
 
 `-Dzensical.stage=sources` stops before `zensical build`, which `zensical serve` would repeat anyway. Leave it out for a deployable static site in `out/site/`:
 
-```sh
+```bash
 dita -i guide.ditamap -f zensical -o out
 ```
 
 To try it without a map of your own, use `sample/sample.ditamap` from this plug-in.
+
+## Build the plug-in ZIP
+
+From the repository root, with the `zip` command installed, run:
+
+```bash
+rm -f com.redhat.zensical.zip
+zip -r com.redhat.zensical.zip \
+  plugin.xml build_zensical.xml conductor.xml \
+  xsl python resources sample \
+README.md INTERCHANGE.md LICENSE
+```
+
+This creates `com.redhat.zensical.zip` in the repository root, with `plugin.xml` at the archive root. The first command removes an earlier archive so it cannot retain files that have since been deleted. Install the ZIP with `dita install com.redhat.zensical.zip`. The GitHub release workflow packages the same files.
 
 ## Architecture
 
@@ -73,7 +87,7 @@ Stage 1, where all the DITA knowledge lives, stays as it is.
 
 DITA-OT has two HTML transformations. `html5` is the maintained one: it emits `<section>`, `<figure>`, `<nav>` and ARIA attributes, and DITA-OT and most plug-ins put new features there. `xhtml` is the older XHTML 1.0 transformation, kept mainly for compatibility.
 
-Markup vocabulary and serialization are separate choices, so the plug-in uses the HTML5 transformation and writes its output with the XSLT `xhtml` method. Each fragment is a well-formed XML document in the XHTML namespace. Any XML parser can read it, Python's standard library included. HTML serialization would leave void elements such as `<img>` unclosed, so only an HTML5 parser could read the fragments.
+Markup vocabulary and serialization are separate choices. This plug-in uses the HTML5 transformation, then writes its output with the XSLT `xhtml` method. Each fragment is a well-formed XML document in the XHTML namespace. Python's standard XML parser can read it. HTML serialization leaves void elements such as `<img>` unclosed, which requires an HTML5 parser.
 
 ## Output
 
@@ -86,7 +100,7 @@ Markup vocabulary and serialization are separate choices, so the plug-in uses th
 
 Preview with live reload while adjusting theme settings:
 
-```sh
+```bash
 cd out && zensical serve
 ```
 
@@ -116,13 +130,13 @@ Standard DITA-OT and HTML5 parameters still apply, for example `--filter`, `args
 
 ### Your own zensical.toml
 
-Pass `-Dzensical.config=site.toml` to keep theme, palette and extensions under version control. The plug-in copies it to `out/zensical.toml` and adds `site_name`, `extra_css` and `nav` under `[project]` when the file does not set them. If you set `markdown_extensions`, keep `attr_list` enabled, because page headings carry their DITA ids through it. Codeblocks follow your `pymdownx.highlight` settings.
+Pass a path such as `-Dzensical.config=site.toml` to keep theme, palette and extensions under version control. Relative paths are resolved from the directory where you run `dita`; absolute paths are also accepted. The plug-in copies the config to `out/zensical.toml` and adds `site_name`, `extra_css` and `nav` under `[project]` when the file does not set them. If you set `markdown_extensions`, keep `attr_list` enabled, because page headings carry their DITA ids through it. Codeblocks follow your `pymdownx.highlight` settings.
 
 ### Source links
 
-Every topic page can show Zensical's own page-action buttons, **Edit this page** and **View source of this page**, pointing at the topic's DITA source in a git repository or in the AEM Guides DAM:
+Each topic page can show two Zensical page actions: **Edit this page** and **View source of this page**. They link to the topic's DITA source in a git repository or the AEM Guides DAM:
 
-```sh
+```bash
 # Git: repository, branch and host are detected from the checkout
 dita -i guide.ditamap -f zensical -o out -Dzensical.source.links=git -Dzensical.source.action=both
 
@@ -140,7 +154,7 @@ It does this in the generated config, and in yours when you pass `zensical.confi
 
 Each topic's path is its source file relative to `zensical.source.root`. For git that root defaults to the top of the checkout. For AEM it defaults to the map's folder, which should correspond to the DAM URL root, so `topics/install.dita` beside the map becomes `…/content/dam/widget-docs/topics/install.dita`. If the path belongs elsewhere in the URL, put `{path}` there:
 
-```sh
+```bash
 -Dzensical.aem.dam-url="https://author.example.com/your/editor/url?src=/content/dam/widget-docs/{path}"
 ```
 
@@ -174,7 +188,7 @@ Stage 2 runs on the Python that Zensical is installed in, because it uses Zensic
 
 You can also run stage 2 by hand on an existing interchange:
 
-```sh
+```bash
 python python/write_site.py --interchange out/interchange --docs out/docs --config out/zensical.toml
 ```
 
@@ -186,7 +200,7 @@ python python/write_site.py --interchange out/interchange --docs out/docs --conf
 * Headings become Markdown headings such as `## Key concepts { #overview__concepts .title .sectiontitle }`, which give Zensical its "On this page" sidebar, permalinks and section search results.
 * Wrappers that contain headings are unwrapped. A section's id moves onto its title, or stays as an empty `div.dita-anchor`, so xrefs still land.
 * Everything else stays raw HTML, one block per line, with newlines inside `<pre>` written as `&#10;`. Python-Markdown passes top-level raw HTML through untouched, while `md_in_html` containers re-parse nested HTML and break common task markup.
-* Links between pages are rewritten from `.html` to `.md`. Zensical then turns them, and image paths, into its directory-style URLs.
+* Cross-page links are rewritten to relative URLs for Zensical's directory-style page routes. Local image paths are adjusted for those routes too.
 
 ### Theme mapping
 
@@ -228,23 +242,23 @@ The XSLT namespace is `urn:x-dita-interchange` (prefix `z`). Stage 2 behaviour i
 
 * Family links (parent, child, sibling) are off through `args.rellinks=nofamily`, since the Zensical nav and footer cover them. Reltable links still appear.
 * `zensical serve` live-reloads theme and config changes. DITA edits need another DITA-OT run, which a Zensical module could later automate.
-* The plug-in id is a placeholder. Rename `com.example.zensical` in `plugin.xml`, and `dita.plugin.com.example.zensical.dir` in `build_zensical.xml`, before publishing.
+* The plug-in ID is `com.redhat.zensical`. DITA-OT sets the matching `dita.plugin.com.redhat.zensical.dir` property for the plug-in directory.
 
 ## Sample
 
-`sample/sample.ditamap` covers concepts, tasks, nested topics, tables, notes, an image, xrefs, a topichead, an external link, a `toc="no"` topic, and a page of codeblock cases.
+`sample/sample.ditamap` covers DITA concepts and tasks, nested topics, tables, notes, and an image. It also includes xrefs, a topichead, an external link, a topic with `toc="no"`, and codeblock examples.
 
-```sh
-dita -i sample/sample.ditamap -f zensical -o out && cd out && zensical serve
+```bash
+dita -i sample/sample.ditamap -f zensical -o out -Dzensical.config=sample/zensical.toml && cd out && zensical serve
 ```
 
 ## Releases
 
-After committing the plug-in and workflow, create and push the first version tag to publish the installable ZIP:
+The initial `0.0.1` release is published. To publish a later version, tag the commit and push the tag. For example:
 
-```sh
-git tag 0.0.1
-git push origin 0.0.1
+```bash
+git tag 0.0.2
+git push origin 0.0.2
 ```
 
-Pushing any tag creates a GitHub release with `com.example.zensical.zip` attached. The archive keeps `plugin.xml` at its root so DITA-OT can install it directly.
+Pushing any tag creates a GitHub release with `com.redhat.zensical.zip` attached. The archive keeps `plugin.xml` at its root so DITA-OT can install it directly.

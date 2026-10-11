@@ -8,7 +8,7 @@
     2. sources      python/dita_zensical adapter -> docs/**/*.md + zensical.toml
     3. site         zensical build -> site/
 -->
-<plugin id="com.example.zensical" version="0.5.1">
+<plugin id="com.redhat.zensical" version="0.5.1">
   <require plugin="org.dita.html5"/>
 
   <transtype name="zensical" extends="base-html" desc="Zensical documentation site">
