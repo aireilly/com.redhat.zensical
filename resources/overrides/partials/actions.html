@@ -1,0 +1,29 @@
+{#-
+  Override of Zensical's partials/actions.html (Zensical 0.0.69), installed by
+  the com.example.zensical DITA-OT plug-in when zensical.source.links is set.
+
+  The buttons are Zensical's own: same markup, the content.action.* features,
+  translated labels and theme.icon settings. Only the URLs differ. They come
+  from each page's DITA source (front matter source_edit_url and
+  source_view_url) in place of page.edit_url, which would point at the
+  generated Markdown file.
+-#}
+{% if "content.action.copy" in features and page.markdown_url %}
+  <button type="button" title="{{ lang.t('action.copy') }}" aria-label="{{ lang.t('action.copy') }}" class="md-content__button md-icon" data-md-copy-url="{{ page.markdown_url | url }}">
+    {% set icon = config.theme.icon.copy or "material/content-copy" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </button>
+{% endif %}
+{% set meta = page.meta or {} %}
+{% if meta.source_edit_url and "content.action.edit" in features %}
+  <a href="{{ meta.source_edit_url }}" title="{{ lang.t('action.edit') }}" class="md-content__button md-icon" rel="edit">
+    {% set icon = config.theme.icon.edit or "material/file-edit-outline" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </a>
+{% endif %}
+{% if meta.source_view_url and "content.action.view" in features %}
+  <a href="{{ meta.source_view_url }}" title="{{ lang.t('action.view') }}" class="md-content__button md-icon">
+    {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </a>
+{% endif %}

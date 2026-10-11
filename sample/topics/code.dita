@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN" "reference.dtd">
+<reference id="code">
+  <title>Code samples</title>
+  <shortdesc>Codeblocks in several languages, as the plug-in renders them.</shortdesc>
+  <refbody>
+    <section id="python"><title>Python with line numbers</title>
+      <codeblock outputclass="language-python show-line-numbers" id="py1">import widget
+
+
+def build(parts: list[str]) -> str:
+    """Join parts &amp; return &lt;result&gt;."""
+    return "-".join(parts)  # simple</codeblock>
+    </section>
+    <section><title>Configuration</title>
+      <fig><title>widget.toml</title>
+        <codeblock outputclass="language-toml">[widget]
+mode = "fast"
+retries = 3</codeblock></fig>
+      <codeblock outputclass="language-json">{"mode": "fast", "retries": 3, "tags": ["a", "b"]}</codeblock>
+    </section>
+    <section><title>DITA markup</title>
+      <codeblock outputclass="language-xml"><![CDATA[<topic id="t">
+  <title>Hello &amp; welcome</title>
+</topic>]]></codeblock>
+      <codeblock outputclass="language-dita"><![CDATA[<codeblock outputclass="language-python">print("hi")</codeblock>]]></codeblock>
+    </section>
+    <section><title>Edge cases</title>
+      <codeblock outputclass="language-bash">widget --mode <varname>MODE</varname></codeblock>
+      <codeblock>Plain text, no language</codeblock>
+      <codeblock>Type <b>exactly</b> this: <userinput>yes</userinput></codeblock>
+      <codeblock outputclass="language-bash">see <xref href="guide/install.dita">Install Widget</xref></codeblock>
+      <codeblock outputclass="language-klingon">tlhIngan Hol</codeblock>
+    </section>
+  </refbody>
+</reference>

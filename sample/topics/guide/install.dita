@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task id="install">
+  <title>Install Widget</title>
+  <shortdesc>Install the package.</shortdesc>
+  <taskbody>
+    <prereq id="prereq"><p>Python 3.10 or later.</p></prereq>
+    <steps>
+      <step><cmd>Run the installer.</cmd>
+        <info><codeblock outputclass="language-bash">pip install widget
+
+# blank line above, *stars* below
+widget --init</codeblock></info></step>
+      <step><cmd>Verify.</cmd><stepresult>It prints a version.</stepresult></step>
+    </steps>
+    <result><p>Widget is installed.</p></result>
+  </taskbody>
+</task>

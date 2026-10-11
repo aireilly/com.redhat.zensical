@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DITA-OT plug-in: publish a DITA map as a Zensical documentation site.
+
+  Pipeline:
+    1. interchange  DITA -> preprocess2 -> org.dita.html5 topic XSLT -> interchange/
+                    (XHTML5 fragments + JSON metadata + site.json; see INTERCHANGE.md)
+    2. sources      python/dita_zensical adapter -> docs/**/*.md + zensical.toml
+    3. site         zensical build -> site/
+-->
+<plugin id="com.example.zensical" version="0.5.1">
+  <require plugin="org.dita.html5"/>
+
+  <transtype name="zensical" extends="base-html" desc="Zensical documentation site">
+    <param name="zensical.site.name" type="string"
+           desc="Site name. Defaults to the map title."/>
+    <param name="zensical.site.url" type="string"
+           desc="Canonical site URL, for example https://docs.example.com/."/>
+    <param name="zensical.site.description" type="string"
+           desc="Site description used in page metadata."/>
+    <param name="zensical.repo.url" type="string"
+           desc="Source repository URL shown in the header."/>
+    <param name="zensical.config" type="file"
+           desc="Your own zensical.toml. The plug-in adds nav and extra_css under [project] when the file does not define them."/>
+    <param name="zensical.home" type="enum"
+           desc="Generate docs/index.md from the map when no topic is published as index.md.">
+      <val default="true">generated</val>
+      <val>none</val>
+    </param>
+    <param name="zensical.admonitions" type="enum"
+           desc="Render DITA notes as Zensical admonitions.">
+      <val default="true">yes</val>
+      <val>no</val>
+    </param>
+    <param name="zensical.theme.tables" type="enum"
+           desc="Let the Zensical theme style DITA tables (moves the DITA class to data-dita-class).">
+      <val default="true">yes</val>
+      <val>no</val>
+    </param>
+    <param name="zensical.highlight" type="enum"
+           desc="Syntax-highlight codeblocks with pymdownx.highlight, as Zensical does for fenced code.">
+      <val default="true">yes</val>
+      <val>no</val>
+    </param>
+    <param name="zensical.code.default-lang" type="string"
+           desc="Language for codeblocks without outputclass='language-*'. Default: text."/>
+    <param name="zensical.python" type="file"
+           desc="Python interpreter Zensical is installed in; runs the adapter. Found automatically when unset."/>
+    <param name="zensical.source.links" type="enum"
+           desc="Add a link on every topic page to its DITA source: in a git repository, or in the AEM Guides DAM.">
+      <val default="true">none</val>
+      <val>git</val>
+      <val>aem</val>
+    </param>
+    <param name="zensical.source.action" type="enum"
+           desc="Which of Zensical's page-action buttons to show for the source: edit, view or both.">
+      <val default="true">edit</val>
+      <val>view</val>
+      <val>both</val>
+    </param>
+    <param name="zensical.source.root" type="dir"
+           desc="Local folder that corresponds to the repository root or the DAM URL root. Default: the git checkout root (git) or the map's folder (aem)."/>
+    <param name="zensical.aem.dam-url" type="string"
+           desc="DAM URL root for aem links, such as https://author.example.com/assetdetails.html/content/dam/docs. The topic path is appended, or replaces {path}."/>
+    <param name="zensical.aem.view-url" type="string"
+           desc="DAM URL root for the view button, when it should differ from zensical.aem.dam-url."/>
+    <param name="zensical.git.url" type="string"
+           desc="Repository web URL for git links. Default: zensical.repo.url, then the origin remote."/>
+    <param name="zensical.git.branch" type="string"
+           desc="Branch for git links. Default: the checked-out branch, or the commit when detached."/>
+    <param name="zensical.git.host" type="enum" desc="Git host URL style. Default: guessed from the repository URL.">
+      <val default="true">auto</val>
+      <val>github</val>
+      <val>gitlab</val>
+      <val>bitbucket</val>
+      <val>gitea</val>
+      <val>azure</val>
+    </param>
+    <param name="zensical.source.url-template" type="string"
+           desc="Full URL template overriding the git or aem preset (edit button, and view unless set below). Placeholders: {path} {raw_path} {repo} {branch} {topic_id}."/>
+    <param name="zensical.source.view-url-template" type="string"
+           desc="Full URL template for the view button."/>
+    <param name="zensical.stage" type="enum"
+           desc="Last step to run: interchange (DITA-OT output only), sources (docs/ and zensical.toml), site (zensical build).">
+      <val>interchange</val>
+      <val>sources</val>
+      <val default="true">site</val>
+    </param>
+    <param name="zensical.executable" type="string"
+           desc="Zensical command to run. Default: zensical (must be on PATH)."/>
+    <param name="zensical.strict" type="enum" desc="Pass --strict to zensical build.">
+      <val>yes</val>
+      <val default="true">no</val>
+    </param>
+  </transtype>
+
+  <feature extension="dita.conductor.target.relative" file="conductor.xml"/>
+
+  <!-- Other plug-ins can import XSLT overrides into the interchange stylesheets -->
+  <extension-point id="dita.xsl.interchange.topic" name="Interchange page XSLT import"/>
+  <extension-point id="dita.xsl.interchange.map" name="Interchange site XSLT import"/>
+  <template file="xsl/topic2interchange_template.xsl"/>
+  <template file="xsl/map2interchange_template.xsl"/>
+</plugin>

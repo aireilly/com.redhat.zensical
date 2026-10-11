@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "concept.dtd">
+<concept id="overview">
+  <title>Overview of <keyword>Widget</keyword></title>
+  <shortdesc>Widget turns *raw* parts into "finished" goods &amp; more.</shortdesc>
+  <conbody>
+    <p>Text with <b>bold</b>, <codeph>code_with_underscores</codeph> and a_b_c *not emphasis*.</p>
+    <note>A plain note.</note>
+    <note type="tip"><p>A tip with a paragraph.</p><p>And a second one.</p></note>
+    <note type="warning">Be careful.</note>
+    <note type="other" othertype="Heads-up">Custom type.</note>
+    <fig><title>Architecture</title><image href="../images/diagram.png" width="120"><alt>Diagram</alt></image></fig>
+    <section id="concepts"><title>Key concepts</title>
+      <dl><dlentry><dt>Part</dt><dd>A raw input.</dd></dlentry></dl>
+      <p>See <xref href="guide/install.dita#install/prereq"/> and <xref href="reference.dita"/>.</p>
+    </section>
+  </conbody>
+</concept>

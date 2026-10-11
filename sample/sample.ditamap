@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN" "map.dtd">
+<map>
+  <title>Widget Guide</title>
+  <topicref href="topics/overview.dita"/>
+  <topichead navtitle="Getting started">
+    <topicref href="topics/guide/install.dita">
+      <topicref href="topics/guide/configure.dita" navtitle="Configure &amp; tune"/>
+    </topicref>
+  </topichead>
+  <topicref href="topics/reference.dita"/>
+  <topicref href="topics/code.dita"/>
+  <topicref href="https://www.dita-ot.org" scope="external" format="html" navtitle="DITA-OT website"/>
+  <topicref href="topics/hidden.dita" toc="no"/>
+</map>

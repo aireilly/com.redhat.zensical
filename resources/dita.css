@@ -1,0 +1,61 @@
+/*
+ * DITA-OT HTML5 classes inside the Zensical theme.
+ * Uses the theme's own custom properties so light and dark schemes both work.
+ */
+
+/* Short description reads as a lead paragraph */
+.md-typeset .shortdesc {
+  font-size: 1.05em;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Inline semantics */
+.md-typeset .uicontrol,
+.md-typeset .wintitle { font-weight: 700; }
+.md-typeset .filepath,
+.md-typeset .cmdname,
+.md-typeset .varname,
+.md-typeset .parmname,
+.md-typeset .option { font-family: var(--md-code-font-family); font-size: .85em; }
+.md-typeset .menucascade .uicontrol + .uicontrol::before { content: " › "; font-weight: 400; }
+
+/* Figures and table captions */
+.md-typeset figure.fig { margin-inline: 0; }
+.md-typeset figcaption { max-width: none; font-style: italic; }
+.md-typeset .fig--title-label,
+.md-typeset .table--title-label { font-weight: 700; font-style: normal; }
+.md-typeset table caption { caption-side: top; text-align: left; padding: .4em 0; font-style: italic; }
+
+/* Tasks */
+.md-typeset ol.steps > li.step { margin-bottom: .8em; }
+.md-typeset .step .cmd { font-weight: 600; }
+.md-typeset .itemgroup { display: block; margin-top: .4em; }
+.md-typeset .tasklabel,
+.md-typeset .sectiontitle.tasklabel { font-size: 1em; margin-top: 1.2em; }
+
+/* Definition lists from <dl>, <parml> */
+.md-typeset dl.dl dt,
+.md-typeset dl.parml dt { font-weight: 700; }
+
+/* Related links at the end of a topic */
+.md-typeset nav.related-links {
+  margin-top: 2.5em;
+  padding-top: 1em;
+  border-top: .05rem solid var(--md-default-fg-color--lightest);
+}
+.md-typeset nav.related-links .relinfotitle,
+.md-typeset nav.related-links .linklist > strong { display: block; margin-bottom: .4em; }
+.md-typeset nav.related-links ul { list-style: none; margin-left: 0; }
+.md-typeset nav.related-links li { margin-left: 0; }
+
+/* Draft comments and required-cleanup only appear with args.draft=yes */
+.md-typeset .draft-comment,
+.md-typeset .required-cleanup {
+  background: var(--md-accent-fg-color--transparent);
+  border-left: .2rem solid var(--md-accent-fg-color);
+  padding: .4em .8em;
+}
+
+/* DITA-OT flagging (ditaval) */
+.md-typeset .flagprop img,
+.md-typeset img.flag { display: inline; vertical-align: middle; }

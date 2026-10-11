@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Inlined into DITA-OT's build by dita.conductor.target.relative; keeps namespaces in build_zensical.xml -->
+<project>
+  <import file="build_zensical.xml"/>
+</project>

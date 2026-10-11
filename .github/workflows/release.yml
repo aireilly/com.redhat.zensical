@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v7
+
+      - name: Package DITA-OT plug-in
+        run: >-
+          zip -r com.example.zensical.zip
+          plugin.xml build_zensical.xml conductor.xml
+          xsl python resources sample
+          README.md INTERCHANGE.md LICENSE
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          com.example.zensical.zip
+          --verify-tag
+          --generate-notes
