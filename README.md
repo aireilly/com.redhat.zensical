@@ -162,7 +162,7 @@ Use whichever AEM URL your authors open topics with. The plug-in doesn't assume 
 
 #### Staged sources
 
-A build whose topics are staged copies cannot derive a source path from the file it read. An AEM Guides mirror is the usual case: AEM writes every reference as a bare GUID filename with no directory part, so the mirror is staged as one flat folder of GUID-named files, and `GUID-abc.dita` says nothing about where the asset lives in the DAM. Point `zensical.source.path-map` at a tab-separated file whose first column is the file name the build reads and whose second column is that asset's path under the root:
+A build whose topics are staged copies cannot derive a source path from the file it read. An AEM Guides mirror is the usual case. AEM writes every reference as a bare GUID filename with no directory part, so the mirror is staged as one flat folder of GUID-named files. `GUID-abc.dita` says nothing about where the asset lives in the DAM. Point `zensical.source.path-map` at a tab-separated file whose first column is the file name the build reads and whose second column is that asset's path under the root:
 
 ```
 GUID-abc1234.dita	widget-docs/topics/install.dita
@@ -231,11 +231,11 @@ Set the language with `outputclass`, as DITA-OT expects:
     return "-".join(parts)</codeblock>
 ```
 
-Each page's codeblocks are rendered as fenced blocks through `pymdownx.superfences` with the project's `pymdownx.highlight` settings. The HTML matches Zensical's own fenced code, including colours in both schemes, the copy button and line anchors.
+Each page's codeblocks are rendered as fenced blocks through `pymdownx.superfences` with the project's `pymdownx.highlight` settings. The HTML matches Zensical's own fenced code, including colors in both schemes, the copy button and line anchors.
 
 * `show-line-numbers` adds line numbers. The codeblock `id` and other classes carry over.
-* `dita`, `ditamap` and `ditaval` are highlighted as XML. An unknown language falls back to plain text with a build warning.
-* Formatting markup such as `<b>` or `<varname>` gives way to token colours when a language is set, and is kept when none is.
+* `dita`, `ditamap` and `ditaval` are highlighted as XML; `terminal` is highlighted as Bash. An unknown language falls back to plain text with a build warning.
+* Formatting markup such as `<b>` or `<varname>` gives way to token colors when a language is set, and is kept when none is.
 * A codeblock containing a link or image keeps its HTML inside the same code box, uncoloured.
 
 ### Nav

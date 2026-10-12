@@ -29,7 +29,7 @@ except ImportError:  # Python < 3.11
 ZENSICAL_DEFAULTS = {"anchor_linenums": True, "line_spans": "__span", "pygments_lang_class": True}
 
 # DITA-flavoured language names Pygments does not know
-ALIASES = {"dita": "xml", "ditamap": "xml", "ditaval": "xml",
+ALIASES = {"dita": "xml", "ditamap": "xml", "ditaval": "xml", "terminal": "bash",
            "none": "text", "plain": "text", "plaintext": "text", "txt": "text"}
 
 # Content that cannot survive as plain text, so the block keeps its HTML
