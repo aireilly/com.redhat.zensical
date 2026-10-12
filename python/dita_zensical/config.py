@@ -5,8 +5,10 @@ Part of today's carrier; a Zensical module would hand Zensical the nav directly.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+from pathlib import Path
 
 try:
     import tomllib
@@ -69,9 +71,11 @@ pymdownx.superfences = {{}}
 pymdownx.tabbed.alternate_style = true
 """
 
-# Version the output filename so Pages and browsers cannot keep serving the
-# previous stylesheet from cache after a plug-in release.
-CSS_FILENAME = "dita-v0.6.7.css"
+# Content-address the output filename so browsers fetch a changed stylesheet
+# without tying the asset name to the plug-in release number.
+CSS_SOURCE = Path(__file__).resolve().parents[2] / "resources" / "dita.css"
+CSS_FINGERPRINT = hashlib.sha256(CSS_SOURCE.read_bytes()).hexdigest()[:12]
+CSS_FILENAME = "dita.{}.css".format(CSS_FINGERPRINT)
 CSS_ENTRY = 'extra_css = ["stylesheets/{}"]'.format(CSS_FILENAME)
 
 # Folder, relative to zensical.toml, that holds the page-action partial for source links

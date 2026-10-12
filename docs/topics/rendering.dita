@@ -20,7 +20,7 @@
       <ul>
         <li>DITA notes become <codeph>div.admonition</codeph> elements with a note type and title.</li>
         <li>DITA table classes are moved to <codeph>data-dita-class</codeph>, because the theme styles class-less tables.</li>
-        <li>The generated <filepath>stylesheets/dita.css</filepath> covers DITA classes that the theme does not style.</li>
+        <li>The generated DITA stylesheet covers DITA classes that the theme does not style.</li>
       </ul>
     </section>
     <section id="output-files">
@@ -30,7 +30,7 @@
           <thead><row><entry>Path</entry><entry>Contents</entry></row></thead>
           <tbody>
             <row><entry><filepath>out/interchange/</filepath></entry><entry>XHTML fragments, JSON metadata, and the map navigation model.</entry></row>
-            <row><entry><filepath>out/docs/</filepath></entry><entry>Markdown pages, images, and <filepath>stylesheets/dita.css</filepath>.</entry></row>
+            <row><entry><filepath>out/docs/</filepath></entry><entry>Markdown pages, images, and the content-addressed DITA stylesheet.</entry></row>
             <row><entry><filepath>out/zensical.toml</filepath></entry><entry>Generated Zensical config or the supplied config with navigation added.</entry></row>
             <row><entry><filepath>out/site/</filepath></entry><entry>The finished static site.</entry></row>
           </tbody>

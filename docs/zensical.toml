@@ -4,7 +4,6 @@ site_url = "https://aireilly.github.io/com.redhat.zensical/"
 site_description = "Build and configure documentation sites from DITA maps with the DITA-OT Zensical plug-in."
 docs_dir = "docs"
 site_dir = "site"
-extra_css = ["stylesheets/dita-v0.6.7.css"]
 # The DITA-OT plug-in adds navigation from guide.ditamap during the build.
 
 [project.theme]
