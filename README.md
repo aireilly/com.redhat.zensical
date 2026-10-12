@@ -160,11 +160,23 @@ Each topic's path is its source file relative to `zensical.source.root`. For git
 
 Use whichever AEM URL your authors open topics with. The plug-in doesn't assume an editor URL, because Adobe doesn't document one as stable. For both buttons in AEM, give the view button its own root with `zensical.aem.view-url`; otherwise both open the same URL.
 
+#### Staged sources
+
+A build whose topics are staged copies cannot derive a source path from the file it read. An AEM Guides mirror is the usual case: AEM writes every reference as a bare GUID filename with no directory part, so the mirror is staged as one flat folder of GUID-named files, and `GUID-abc.dita` says nothing about where the asset lives in the DAM. Point `zensical.source.path-map` at a tab-separated file whose first column is the file name the build reads and whose second column is that asset's path under the root:
+
+```
+GUID-abc1234.dita	widget-docs/topics/install.dita
+GUID-def5678.dita	widget-docs/topics/configure.dita
+```
+
+Further columns are ignored, so the staging tool can keep its own bookkeeping in the same file, and blank lines and lines starting with `#` are skipped. A file the map does not name still falls back to its path under `zensical.source.root`, so a part-staged build keeps working. The map applies to `git` source links too, for a build staged the same way.
+
 | Parameter | Default | Purpose |
 |---|---|---|
 | `zensical.source.links` | `none` | `git`, `aem` or `none` |
 | `zensical.source.action` | `edit` | Buttons to show: `edit`, `view` or `both` |
 | `zensical.source.root` | checkout top (git), map folder (aem) | Local folder matching the repository root or the DAM URL root |
+| `zensical.source.path-map` | | Tab-separated source file name to path under the root, for staged builds |
 | `zensical.aem.dam-url` | | DAM URL root. Required for `aem` |
 | `zensical.aem.view-url` | `zensical.aem.dam-url` | DAM URL root for the view button |
 | `zensical.git.url` | `zensical.repo.url`, then `origin` | Repository web URL. SSH remotes are converted to HTTPS |
@@ -191,6 +203,8 @@ You can also run stage 2 by hand on an existing interchange:
 ```bash
 python python/write_site.py --interchange out/interchange --docs out/docs --config out/zensical.toml
 ```
+
+`write_site.py --help` lists the stage 2 options, including the source-link ones.
 
 ## Stage 2 details
 

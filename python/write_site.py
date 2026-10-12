@@ -60,6 +60,8 @@ def main(argv=None):
     links.add_argument("--git-host", default="auto")
     links.add_argument("--dam-url", default="", help="DAM URL root; the topic path is appended or replaces {path}")
     links.add_argument("--dam-view-url", default="", help="DAM URL root for the view button; default --dam-url")
+    links.add_argument("--source-path-map", default="",
+                       help="tab-separated source file name to path under the root, for staged builds")
     links.add_argument("--overrides", type=pathlib.Path, help="the plug-in's theme overrides folder")
     args = parser.parse_args(argv)
 
@@ -77,7 +79,8 @@ def main(argv=None):
                 action=args.source_action, template=args.source_url_template,
                 view_template=args.source_view_url_template,
                 git_url=args.git_url or args.repo_url, git_branch=args.git_branch, git_host=args.git_host,
-                dam_url=args.dam_url, dam_view_url=args.dam_view_url)
+                dam_url=args.dam_url, dam_view_url=args.dam_view_url,
+                path_map=args.source_path_map)
         except source_links.SourceLinkError as exc:
             sys.exit("error: source links: {}".format(exc))
 

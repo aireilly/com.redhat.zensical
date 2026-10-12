@@ -145,6 +145,7 @@
       <arg value="--git-host" if:set="zensical.git.host"/>                       <arg value="${zensical.git.host}" if:set="zensical.git.host"/>
       <arg value="--dam-url" if:set="zensical.aem.dam-url"/>                     <arg value="${zensical.aem.dam-url}" if:set="zensical.aem.dam-url"/>
       <arg value="--dam-view-url" if:set="zensical.aem.view-url"/>               <arg value="${zensical.aem.view-url}" if:set="zensical.aem.view-url"/>
+      <arg value="--source-path-map" if:set="zensical.source.path-map"/>         <arg file="${zensical.source.path-map}" if:set="zensical.source.path-map"/>
       <arg value="--overrides"/>        <arg file="${zensical.plugin.dir}/resources/overrides"/>
     </exec>
     <!-- DITA-OT's default logger hides exec stderr; surface the adapter's warnings -->

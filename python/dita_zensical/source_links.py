@@ -1,8 +1,9 @@
 """Per-page links to the DITA source in a git repository or an AEM Guides DAM.
 
 Each interchange page records the URI of its source topic. A SourceLinks
-instance maps that file to a path relative to a local root folder and turns
-the path into a URL:
+instance maps that file to a path relative to a local root folder, or through
+a path map when the build reads its topics from staged copies rather than from
+the source tree, and turns the path into a URL:
 
     git   the repository's web UI, for editing or viewing the file on a branch
     aem   a DAM URL root you supply; the path is appended, or replaces {path}
@@ -22,7 +23,7 @@ import re
 import subprocess
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # Web UI URL patterns per git host, for each action
 GIT_TEMPLATES = {
@@ -36,6 +37,39 @@ GIT_TEMPLATES = {
 
 class SourceLinkError(Exception):
     """The source-link settings are incomplete or inconsistent."""
+
+
+def load_path_map(path) -> dict[str, str]:
+    """Read a tab-separated file of source file name to path under the root.
+
+    A build whose topics are staged copies cannot derive the source path from
+    the file it read: an AEM Guides mirror, for instance, is staged as one flat
+    folder of GUID-named files, because AEM writes every reference as a bare
+    GUID filename. The staging step knows which GUID is which asset, and writes
+    that mapping here.
+
+    The first column is the file name as the build reads it, the second its
+    path relative to the DAM or repository root. Further columns are ignored,
+    so a staging tool can keep its own bookkeeping in the same file. Blank
+    lines and lines starting with # are skipped.
+    """
+    mapping = {}
+    try:
+        text = pathlib.Path(path).read_text(encoding="utf-8")
+    except OSError as exc:
+        raise SourceLinkError("cannot read the source path map {}: {}".format(path, exc)) from None
+    for line in text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        fields = line.split("\t")
+        if len(fields) < 2:
+            continue
+        name, relpath = fields[0].strip(), fields[1].strip()
+        if name and relpath:
+            mapping[name] = relpath
+    if not mapping:
+        raise SourceLinkError("the source path map {} has no entries".format(path))
+    return mapping
 
 
 def uri_to_path(uri: str) -> pathlib.Path | None:
@@ -92,6 +126,7 @@ class SourceLinks:
     root: pathlib.Path
     repo: str = ""
     branch: str = ""
+    path_map: dict[str, str] = field(default_factory=dict)  # source file name -> path under the root
 
     @property
     def actions(self) -> tuple[str, ...]:
@@ -99,7 +134,8 @@ class SourceLinks:
 
     @classmethod
     def configure(cls, kind, *, site_source="", root="", action="edit", template="", view_template="",
-                  git_url="", git_branch="", git_host="auto", dam_url="", dam_view_url=""):
+                  git_url="", git_branch="", git_host="auto", dam_url="", dam_view_url="",
+                  path_map=""):
         if kind not in ("git", "aem"):
             raise SourceLinkError("source links must be git or aem, not {!r}".format(kind))
         if action not in ACTIONS:
@@ -108,6 +144,7 @@ class SourceLinks:
         map_file = uri_to_path(site_source) if site_source else None
         map_dir = map_file.parent if map_file else pathlib.Path.cwd()
         overrides = {"edit": template, "view": view_template or template}
+        mapping = load_path_map(path_map) if path_map else {}
 
         if kind == "git":
             top = _git(map_dir, "rev-parse", "--show-toplevel")
@@ -127,7 +164,7 @@ class SourceLinks:
                 raise SourceLinkError("unknown git host {!r}; use one of {} or set a URL template".format(
                     host, ", ".join(sorted(GIT_TEMPLATES))))
             templates = {a: _checked(overrides[a] or GIT_TEMPLATES[host][a]) for a in actions}
-            return cls(kind, templates, base, repo=repo, branch=branch)
+            return cls(kind, templates, base, repo=repo, branch=branch, path_map=mapping)
 
         edit_url = template or dam_url
         view_url = view_template or dam_view_url or edit_url
@@ -137,12 +174,18 @@ class SourceLinks:
             raise SourceLinkError("aem source links need the DAM URL root (zensical.aem.dam-url)")
         templates = {a: _checked(_with_path(urls[a])) for a in actions}
         base = pathlib.Path(root).resolve() if root else map_dir
-        return cls(kind, templates, base)
+        return cls(kind, templates, base, path_map=mapping)
 
     def relative_path(self, page) -> str | None:
         source = uri_to_path(page.meta.get("source", ""))
         if source is None:
             return None
+        # A staged copy carries no trace of where the asset lives, so the path
+        # map answers for it. Anything the map does not name still falls back
+        # to the path under the root, which covers a part-staged build.
+        mapped = self.path_map.get(source.name)
+        if mapped:
+            return mapped.lstrip("/")
         try:
             return source.relative_to(self.root).as_posix()
         except ValueError:
