@@ -18,6 +18,7 @@ from __future__ import annotations
 import copy
 import html
 import json
+import pathlib
 import posixpath
 import re
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
@@ -36,12 +37,13 @@ _SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.\-]*:")
 
 class Options:
     def __init__(self, admonitions=True, theme_tables=True, highlight=True, default_language="text",
-                 source_links=None):
+                 source_links=None, edit_icon=None):
         self.admonitions = admonitions
         self.theme_tables = theme_tables
         self.highlight = highlight
         self.default_language = default_language
         self.source_links = source_links  # a source_links.SourceLinks, or None
+        self.edit_icon = edit_icon
 
 
 def markdown_path(page_path: str) -> str:
@@ -62,7 +64,7 @@ def page_markdown(page, site, options: Options, highlighter: highlight.Highlight
     _rewrite_links(root, page.path, site.pages, site.assets)
     links = options.source_links
     if links is not None:
-        _add_topic_edit_links(root, page, links)
+        _add_topic_edit_links(root, page, links, options.edit_icon)
     code_html = _prepare_code(root, page.path, options, highlighter)
 
     body = []
@@ -81,7 +83,7 @@ def page_markdown(page, site, options: Options, highlighter: highlight.Highlight
     return front_matter(page.meta, extra) + text
 
 
-def _add_topic_edit_links(root, page, links):
+def _add_topic_edit_links(root, page, links, edit_icon):
     """Add an Edit link beside each nested topic heading with a source mapping."""
     topics = {topic.get("id"): topic for topic in page.meta.get("topics", []) if topic.get("id")}
     page_id = page.meta.get("id")
@@ -103,12 +105,36 @@ def _add_topic_edit_links(root, page, links):
         title = " ".join("".join(heading.itertext()).split())
         edit = ET.SubElement(heading, "a", {
             "href": edit_url,
-            "class": "dita-topic-edit",
+            "class": "md-content__button md-icon dita-topic-edit",
             "title": "Edit this topic",
             "aria-label": "Edit {}".format(title),
             "rel": "edit",
         })
-        edit.text = "Edit"
+        if edit_icon is not None:
+            edit.append(copy.deepcopy(edit_icon))
+        else:
+            edit.text = "Edit"
+
+
+def load_theme_icon(name: str):
+    """Load a configured Zensical theme icon for use in generated HTML."""
+    try:
+        import zensical
+    except ImportError:
+        return None
+    icon_root = pathlib.Path(zensical.__file__).resolve().parent / "templates" / ".icons"
+    icon_path = (icon_root / (name + ".svg")).resolve()
+    if not icon_path.is_relative_to(icon_root.resolve()) or not icon_path.is_file():
+        return None
+    try:
+        icon = ET.parse(icon_path).getroot()
+    except ET.ParseError:
+        return None
+    for element in icon.iter():
+        element.tag = element.tag.rsplit("}", 1)[-1]
+    icon.set("aria-hidden", "true")
+    icon.set("focusable", "false")
+    return icon
 
 
 def front_matter(meta: dict, extra: dict | None = None) -> str:

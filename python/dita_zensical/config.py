@@ -84,6 +84,18 @@ def q(value: str) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
+def theme_icon(text: str, name: str, default: str) -> str:
+    """Read a configured theme icon name, or use the theme's default icon."""
+    if tomllib is None:
+        return default
+    try:
+        data = tomllib.loads(text)
+    except tomllib.TOMLDecodeError:
+        return default
+    icon = data.get("project", {}).get("theme", {}).get("icon", {}).get(name, default)
+    return icon if isinstance(icon, str) else default
+
+
 def nav_toml(nav, with_home: bool) -> str:
     entries = ([q("index.md")] if with_home else []) + [e for item in nav for e in _entries(item)]
     return "\n".join(["nav = ["] + ["  {},".format(e) for e in entries] + ["]"])

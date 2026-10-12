@@ -19,14 +19,6 @@
 .md-typeset .option { font-family: var(--md-code-font-family); font-size: .85em; }
 .md-typeset .menucascade .uicontrol + .uicontrol::before { content: " › "; font-weight: 400; }
 
-/* Edit actions for child topics included in a combined output page */
-.md-typeset a.dita-topic-edit {
-  margin-inline-start: .65em;
-  font-size: .6em;
-  font-weight: 400;
-  white-space: nowrap;
-}
-
 /* Figures and table captions */
 .md-typeset figure.fig { margin-inline: 0; }
 .md-typeset figcaption { max-width: none; font-style: italic; }

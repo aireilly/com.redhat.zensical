@@ -5,7 +5,7 @@
   <shortdesc>Add Edit this page and View source actions to topic pages, with links to Git hosting or the AEM Guides DAM.</shortdesc>
   <conbody>
     <p>Set <codeph>zensical.source.links</codeph> to <codeph>git</codeph> or <codeph>aem</codeph> to add page actions. The plug-in overrides Zensical's <filepath>partials/actions.html</filepath> theme partial so each page can use its own source URLs from front matter.</p>
-    <p>When the input map sets <codeph>chunk="to-content"</codeph>, child topics are included in a combined output document. Each child topic with its own DITA source file gets an Edit link beside its heading. The page-level Edit this page and View source actions continue to target the page's root topic.</p>
+    <p>When the input map sets <codeph>chunk="to-content"</codeph>, child topics are included in a combined output document. Each child topic with its own DITA source file gets the configured Edit action beside its heading. The page-level Edit this page and View source actions continue to target the page's root topic.</p>
     <section id="git-links">
       <title>Git links</title>
       <p>For a Git repository, the plug-in detects the repository, branch, and hosting service from the checkout. SSH remotes are converted to HTTPS. Detached checkouts, including many CI builds, use the commit instead of a branch name.</p>

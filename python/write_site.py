@@ -112,10 +112,17 @@ def main(argv=None):
     if yes(args.highlight):
         highlighter = highlight.Highlighter(highlight.settings_from_config(args.config), warn=warnings.append)
 
+    edit_icon = None
+    if links is not None:
+        icon_name = config.theme_icon(toml, "edit", "material/file-edit-outline")
+        edit_icon = carrier.load_theme_icon(icon_name)
+        if edit_icon is None:
+            warnings.append("could not load theme edit icon {!r}; child-topic links use text".format(icon_name))
+
     options = carrier.Options(
         admonitions=yes(args.admonitions), theme_tables=yes(args.theme_tables),
         highlight=highlighter is not None, default_language=args.default_lang or "text",
-        source_links=links)
+        source_links=links, edit_icon=edit_icon)
 
     args.docs.mkdir(parents=True, exist_ok=True)
     count = carrier.write_pages(site, args.docs, options, highlighter, warn=warnings.append)
