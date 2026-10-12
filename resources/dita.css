@@ -19,6 +19,9 @@
 .md-typeset .option { font-family: var(--md-code-font-family); font-size: .85em; }
 .md-typeset .menucascade .uicontrol + .uicontrol::before { content: " › "; font-weight: 400; }
 
+/* Heading icons also appear in generated TOC labels, where edit actions do not belong. */
+.md-nav__link svg.dita-topic-edit-icon { display: none; }
+
 /* Figures and table captions */
 .md-typeset figure.fig { margin-inline: 0; }
 .md-typeset figcaption { max-width: none; font-style: italic; }

@@ -132,6 +132,8 @@ def load_theme_icon(name: str):
         return None
     for element in icon.iter():
         element.tag = element.tag.rsplit("}", 1)[-1]
+    icon_classes = icon.get("class", "").split()
+    icon.set("class", " ".join(icon_classes + ["dita-topic-edit-icon"]))
     icon.set("aria-hidden", "true")
     icon.set("focusable", "false")
     return icon
