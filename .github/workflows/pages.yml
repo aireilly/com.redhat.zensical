@@ -61,6 +61,9 @@ jobs:
         run: >-
           dita -i docs/guide.ditamap -f zensical -o out
           -Dzensical.config=docs/zensical.toml
+          -Dzensical.source.links=git
+          -Dzensical.source.action=edit
+          -Dzensical.git.branch=main
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
