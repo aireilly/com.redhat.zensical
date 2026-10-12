@@ -8,9 +8,10 @@ the source tree, and turns the path into a URL:
     git   the repository's web UI, for editing or viewing the file on a branch
     aem   a DAM URL root you supply; the path is appended, or replaces {path}
 
-The URLs go into each page's front matter as source_edit_url and
-source_view_url. Zensical renders them with its own page-action buttons,
-through the partials/actions.html override in resources/overrides.
+The page's source URLs go into front matter as source_edit_url and
+source_view_url. For combined topics, child-topic edit URLs are added beside
+their headings. Zensical renders page actions through the partials/actions.html
+override in resources/overrides.
 
 URL templates accept these placeholders: {path} (URL-encoded, '/' kept),
 {raw_path}, {repo}, {branch} and {topic_id}.
@@ -191,13 +192,14 @@ class SourceLinks:
         except ValueError:
             return None
 
-    def urls_for(self, page, source_uri=None) -> dict[str, str]:
+    def urls_for(self, page, source_uri=None, topic_id=None) -> dict[str, str]:
         """{"edit": url, "view": url} for the configured actions; empty when unmapped."""
         rel = self.relative_path(page, source_uri=source_uri)
         if rel is None:
             return {}
         fields = _Fields(path=urllib.parse.quote(rel, safe="/"), raw_path=rel, repo=self.repo,
-                         branch=urllib.parse.quote(self.branch, safe="/"), topic_id=page.meta.get("id", ""))
+                         branch=urllib.parse.quote(self.branch, safe="/"),
+                         topic_id=page.meta.get("id", "") if topic_id is None else topic_id)
         # Encode unsafe characters in the configured URL (a space in a DAM folder, say);
         # existing %xx escapes, URL syntax and {placeholders} are kept
         return {action: urllib.parse.quote(template, safe=":/?#[]@!$&'()*+,;=%{}~").format_map(fields)

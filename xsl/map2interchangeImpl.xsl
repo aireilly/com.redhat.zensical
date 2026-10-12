@@ -22,8 +22,6 @@
               'title': z:map-title($map),
               'source': string(($map/@xtrf, base-uri($map))[1]),
               'nav': array { $map/*[contains(@class, ' map/topicref ')] ! z:nav(.) } },
-        (if (tokenize(normalize-space($map/@chunk), '\s+') = 'to-content')
-         then map { 'chunk_to_content': true() } else ()),
         (z:map-description($map)[. != ''] ! map { 'description': . }),
         ($map/@xml:lang ! map { 'language': string(.) }),
         z:site-metadata-extra($map)),

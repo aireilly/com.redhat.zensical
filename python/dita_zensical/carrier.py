@@ -60,6 +60,9 @@ def _page_route(page_path: str) -> str:
 def page_markdown(page, site, options: Options, highlighter: highlight.Highlighter | None) -> str:
     root = theme.adapt(page.element(), admonitions=options.admonitions, tables=options.theme_tables)
     _rewrite_links(root, page.path, site.pages, site.assets)
+    links = options.source_links
+    if links is not None:
+        _add_topic_edit_links(root, page, links)
     code_html = _prepare_code(root, page.path, options, highlighter)
 
     body = []
@@ -69,15 +72,43 @@ def page_markdown(page, site, options: Options, highlighter: highlight.Highlight
         text = text.replace("<{0} n=\"{1}\"></{0}>".format(PLACEHOLDER_TAG, number), _one_line(rendered))
 
     extra = {}
-    links = options.source_links
     if links is not None:
-        map_source = site.meta.get("source") if site.meta.get("chunk_to_content") else None
-        urls = links.urls_for(page, source_uri=map_source)
+        urls = links.urls_for(page)
         if urls:
             # Rendered by Zensical's own page-action buttons (resources/overrides/partials/actions.html)
-            extra["dita_source"] = links.relative_path(page, source_uri=map_source)
+            extra["dita_source"] = links.relative_path(page)
             extra.update({"source_{}_url".format(action): url for action, url in urls.items()})
     return front_matter(page.meta, extra) + text
+
+
+def _add_topic_edit_links(root, page, links):
+    """Add an Edit link beside each nested topic heading with a source mapping."""
+    topics = {topic.get("id"): topic for topic in page.meta.get("topics", []) if topic.get("id")}
+    page_id = page.meta.get("id")
+    if not topics:
+        return
+    for article in root.iter("article"):
+        topic_id = article.get("id")
+        if topic_id == page_id:
+            continue
+        topic = topics.get(topic_id)
+        if not topic or not topic.get("source"):
+            continue
+        heading = next((child for child in article if _is_heading(child)), None)
+        if heading is None:
+            continue
+        edit_url = links.urls_for(page, source_uri=topic["source"], topic_id=topic_id).get("edit")
+        if not edit_url:
+            continue
+        title = " ".join("".join(heading.itertext()).split())
+        edit = ET.SubElement(heading, "a", {
+            "href": edit_url,
+            "class": "dita-topic-edit",
+            "title": "Edit this topic",
+            "aria-label": "Edit {}".format(title),
+            "rel": "edit",
+        })
+        edit.text = "Edit"
 
 
 def front_matter(meta: dict, extra: dict | None = None) -> str:

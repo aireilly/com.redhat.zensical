@@ -92,6 +92,8 @@
               'id': string($topic/@id),
               'type': $type,
               'source': string(($topic/@xtrf, base-uri($topic))[1]),
+              'topics': array { $root/descendant-or-self::*[contains(@class, ' topic/topic ')] !
+                  map { 'id': string(@id), 'source': string((@xtrf, base-uri(.))[1]) } },
               'headings': array { $fragment//*[matches(local-name(), '^h[1-6]$')] ! z:heading-entry(.) } },
         ($desc[. != ''] ! map { 'description': . }),
         (if (exists($keywords)) then map { 'keywords': array { $keywords } } else ()),

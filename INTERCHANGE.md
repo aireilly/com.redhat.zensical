@@ -38,6 +38,7 @@ Nothing in the fragment is specific to a theme or a site generator.
 | `type` | string | Topic type from `@class`, such as `concept` or `task` |
 | `outputclass` | string | Optional |
 | `source` | string | URI of the source topic file as DITA-OT saw it, before preprocessing. Publishers use it for edit and view-source links |
+| `topics` | array | Optional. Topic IDs and source URIs represented in the page, including nested topics in combined output. |
 | `headings` | array | One entry per heading in document order |
 
 A heading entry holds `level` (1 to 6), `text` (plain), `html` (inner markup, as for `title_html`), `classes` (array) and `anchor`. `anchor` is the id a table of contents should link to: the heading's own id, otherwise the id of the section or nested topic it titles. It is omitted when neither exists.
@@ -51,7 +52,6 @@ A heading entry holds `level` (1 to 6), `text` (plain), `html` (inner markup, as
 | `source` | string | URI of the source map as DITA-OT saw it |
 | `description` | string | Optional. Map `topicmeta/shortdesc` |
 | `language` | string | Optional. `xml:lang` of the map |
-| `chunk_to_content` | boolean | Optional. Present when the map sets `chunk="to-content"`; publishers can use the map as the source for links to combined output. |
 | `nav` | array | Nav items, see below |
 
 A nav item has `title` (optional) and `children` (array, possibly empty), plus at most one of `page` (a page path such as `topics/overview.html`) or `url` (an external link). An item with neither is a heading, such as a `topichead` or titled `topicgroup`. Untitled topicgroups are flattened into their parent. Topicrefs with `toc="no"` or `processing-role="resource-only"` are left out, but their pages are still in `content/`.
