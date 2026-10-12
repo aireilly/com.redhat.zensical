@@ -69,7 +69,10 @@ pymdownx.superfences = {{}}
 pymdownx.tabbed.alternate_style = true
 """
 
-CSS_ENTRY = 'extra_css = ["stylesheets/dita.css"]'
+# Version the output filename so Pages and browsers cannot keep serving the
+# previous stylesheet from cache after a plug-in release.
+CSS_FILENAME = "dita-v0.6.7.css"
+CSS_ENTRY = 'extra_css = ["stylesheets/{}"]'.format(CSS_FILENAME)
 
 # Folder, relative to zensical.toml, that holds the page-action partial for source links
 OVERRIDES_DIR = "overrides"

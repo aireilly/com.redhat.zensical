@@ -20,7 +20,7 @@
 .md-typeset .menucascade .uicontrol + .uicontrol::before { content: " › "; font-weight: 400; }
 
 /* Heading icons also appear in generated TOC labels, where edit actions do not belong. */
-.md-nav__link svg.dita-topic-edit-icon { display: none; }
+.md-nav__list[data-md-component="toc"] .md-nav__link svg.dita-topic-edit-icon { display: none !important; }
 
 /* Figures and table captions */
 .md-typeset figure.fig { margin-inline: 0; }

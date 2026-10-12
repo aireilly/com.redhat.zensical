@@ -134,7 +134,7 @@ def main(argv=None):
         shutil.copy2(site.content / asset, target)
     if args.css:
         (args.docs / "stylesheets").mkdir(exist_ok=True)
-        shutil.copy2(args.css, args.docs / "stylesheets" / "dita.css")
+        shutil.copy2(args.css, args.docs / "stylesheets" / config.CSS_FILENAME)
 
     for warning in warnings:
         # stderr: Ant logs it, and the plug-in re-emits it as a DITA-OT warning
