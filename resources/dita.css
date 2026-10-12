@@ -28,7 +28,6 @@
 
 /* Tasks */
 .md-typeset ol.steps > li.step { margin-bottom: .8em; }
-.md-typeset .step .cmd { font-weight: 600; }
 .md-typeset .itemgroup { display: block; margin-top: .4em; }
 .md-typeset .tasklabel,
 .md-typeset .sectiontitle.tasklabel { font-size: 1em; margin-top: 1.2em; }
