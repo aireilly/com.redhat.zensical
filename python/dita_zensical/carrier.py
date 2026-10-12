@@ -71,10 +71,11 @@ def page_markdown(page, site, options: Options, highlighter: highlight.Highlight
     extra = {}
     links = options.source_links
     if links is not None:
-        urls = links.urls_for(page)
+        map_source = site.meta.get("source") if site.meta.get("chunk_to_content") else None
+        urls = links.urls_for(page, source_uri=map_source)
         if urls:
             # Rendered by Zensical's own page-action buttons (resources/overrides/partials/actions.html)
-            extra["dita_source"] = links.relative_path(page)
+            extra["dita_source"] = links.relative_path(page, source_uri=map_source)
             extra.update({"source_{}_url".format(action): url for action, url in urls.items()})
     return front_matter(page.meta, extra) + text
 
@@ -257,7 +258,9 @@ def _yaml(value: str) -> str:
 def write_pages(site, docs_dir, options: Options, highlighter, warn=print) -> int:
     links = options.source_links
     if links is not None:
-        unmapped = sorted(p.path for p in site.pages.values() if not links.urls_for(p))
+        map_source = site.meta.get("source") if site.meta.get("chunk_to_content") else None
+        unmapped = sorted(p.path for p in site.pages.values()
+                          if not links.urls_for(p, source_uri=map_source))
         if unmapped:
             warn("{} page(s) have no source link, because their source is outside {}: {}".format(
                 len(unmapped), links.root, ", ".join(unmapped[:5]) + (" ..." if len(unmapped) > 5 else "")))

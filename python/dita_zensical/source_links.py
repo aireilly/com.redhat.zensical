@@ -176,8 +176,8 @@ class SourceLinks:
         base = pathlib.Path(root).resolve() if root else map_dir
         return cls(kind, templates, base, path_map=mapping)
 
-    def relative_path(self, page) -> str | None:
-        source = uri_to_path(page.meta.get("source", ""))
+    def relative_path(self, page, source_uri=None) -> str | None:
+        source = uri_to_path(page.meta.get("source", "") if source_uri is None else source_uri)
         if source is None:
             return None
         # A staged copy carries no trace of where the asset lives, so the path
@@ -191,9 +191,9 @@ class SourceLinks:
         except ValueError:
             return None
 
-    def urls_for(self, page) -> dict[str, str]:
+    def urls_for(self, page, source_uri=None) -> dict[str, str]:
         """{"edit": url, "view": url} for the configured actions; empty when unmapped."""
-        rel = self.relative_path(page)
+        rel = self.relative_path(page, source_uri=source_uri)
         if rel is None:
             return {}
         fields = _Fields(path=urllib.parse.quote(rel, safe="/"), raw_path=rel, repo=self.repo,
