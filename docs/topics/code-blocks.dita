@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN" "reference.dtd">
+<reference id="code-blocks">
+  <title>Code block rendering</title>
+  <shortdesc>Set DITA codeblock output classes to choose the syntax highlighter and optional line numbers.</shortdesc>
+  <refbody>
+    <section id="language">
+      <title>Set a language</title>
+      <p>Use <codeph>outputclass="language-name"</codeph> to select a language. The plug-in renders codeblocks as fenced code through <codeph>pymdownx.superfences</codeph>, using the project's <codeph>pymdownx.highlight</codeph> settings.</p>
+      <codeblock outputclass="language-xml">&lt;codeblock outputclass="language-python show-line-numbers"&gt;def build(parts):
+    return "-".join(parts)&lt;/codeblock&gt;</codeblock>
+      <p>The generated code uses Zensical's highlighting styles, copy button, and line anchors. Add <codeph>show-line-numbers</codeph> to display line numbers. The codeblock's DITA ID and other classes are retained.</p>
+    </section>
+    <section id="language-mapping">
+      <title>Language mapping and fallback</title>
+      <ul>
+        <li><codeph>dita</codeph>, <codeph>ditamap</codeph>, and <codeph>ditaval</codeph> use XML highlighting.</li>
+        <li><codeph>terminal</codeph> uses Bash highlighting.</li>
+        <li>A codeblock without a language uses <codeph>zensical.code.default-lang</codeph>, which defaults to plain text.</li>
+        <li>An unrecognized language falls back to plain text and produces a build warning.</li>
+      </ul>
+    </section>
+    <section id="inline-markup">
+      <title>Formatting inside codeblocks</title>
+      <p>When a language is set, inline formatting such as <codeph>&lt;b&gt;</codeph> or <codeph>&lt;varname&gt;</codeph> is replaced by syntax token colors. Without a language, DITA formatting markup is retained. A codeblock with a link or image keeps its HTML inside the code box and is not syntax-colored.</p>
+    </section>
+  </refbody>
+</reference>

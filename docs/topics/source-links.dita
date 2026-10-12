@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "concept.dtd">
+<concept id="source-links">
+  <title>Link published pages to their DITA sources</title>
+  <shortdesc>Add Edit this page and View source actions to topic pages, with links to Git hosting or the AEM Guides DAM.</shortdesc>
+  <conbody>
+    <p>Set <codeph>zensical.source.links</codeph> to <codeph>git</codeph> or <codeph>aem</codeph> to add page actions. The plug-in overrides Zensical's <filepath>partials/actions.html</filepath> theme partial so each page can use its own source URLs from front matter.</p>
+    <section id="git-links">
+      <title>Git links</title>
+      <p>For a Git repository, the plug-in detects the repository, branch, and hosting service from the checkout. SSH remotes are converted to HTTPS. Detached checkouts, including many CI builds, use the commit instead of a branch name.</p>
+      <codeblock outputclass="language-bash">dita -i guide.ditamap -f zensical -o out \
+  -Dzensical.source.links=git \
+  -Dzensical.source.action=both</codeblock>
+    </section>
+    <section id="aem-links">
+      <title>AEM Guides links</title>
+      <p>Set the DAM URL root to the location that corresponds to the source topic paths. The plug-in appends each topic's path to that root by default. Use <codeph>{path}</codeph> in a URL template when the path belongs elsewhere in the URL.</p>
+      <codeblock outputclass="language-bash">dita -i guide.ditamap -f zensical -o out \
+  -Dzensical.source.links=aem \
+  -Dzensical.aem.dam-url=https://author.example.com/assetdetails.html/content/dam/widget-docs</codeblock>
+      <p>For both actions in AEM, set <codeph>zensical.aem.view-url</codeph> to a separate root if the view action uses a different URL. The plug-in does not assume an editor URL because Adobe does not document one as stable.</p>
+    </section>
+    <section id="staged-sources">
+      <title>Map staged topic files to their source paths</title>
+      <p>A staged build may read copied topic files whose paths do not identify their original locations. For example, an AEM Guides mirror can stage topics in one flat directory with GUID filenames. Set <codeph>zensical.source.path-map</codeph> to a tab-separated file that maps each staged filename to a path under the configured source root:</p>
+      <codeblock outputclass="language-text">GUID-abc1234.dita&#x9;widget-docs/topics/install.dita
+GUID-def5678.dita&#x9;widget-docs/topics/configure.dita</codeblock>
+      <p>The first column is the filename read by the build; the second is its path under the Git or DAM root. Further columns are ignored. Blank lines and lines starting with <codeph>#</codeph> are skipped. Unmapped topics fall back to their path under <codeph>zensical.source.root</codeph>. Topics outside that root receive no buttons and are listed in a warning. The generated home page also has no source actions because it has no DITA source.</p>
+    </section>
+    <section id="source-parameters">
+      <title>Source-link parameters</title>
+      <table frame="all">
+        <tgroup cols="3">
+          <thead><row><entry>Parameter</entry><entry>Default</entry><entry>Purpose</entry></row></thead>
+          <tbody>
+            <row><entry><codeph>zensical.source.links</codeph></entry><entry><codeph>none</codeph></entry><entry><codeph>git</codeph>, <codeph>aem</codeph>, or <codeph>none</codeph>.</entry></row>
+            <row><entry><codeph>zensical.source.action</codeph></entry><entry><codeph>edit</codeph></entry><entry>Show the <codeph>edit</codeph>, <codeph>view</codeph>, or <codeph>both</codeph> actions.</entry></row>
+            <row><entry><codeph>zensical.source.root</codeph></entry><entry>Checkout root for Git; map folder for AEM</entry><entry>Local folder that corresponds to the repository root or DAM URL root.</entry></row>
+            <row><entry><codeph>zensical.source.path-map</codeph></entry><entry>Unset</entry><entry>Tab-separated mapping from staged filenames to paths under the source root.</entry></row>
+            <row><entry><codeph>zensical.aem.dam-url</codeph></entry><entry>Unset</entry><entry>Required DAM URL root when source links use AEM.</entry></row>
+            <row><entry><codeph>zensical.aem.view-url</codeph></entry><entry><codeph>zensical.aem.dam-url</codeph></entry><entry>DAM URL root used by the view action.</entry></row>
+            <row><entry><codeph>zensical.git.url</codeph></entry><entry><codeph>zensical.repo.url</codeph>, then <codeph>origin</codeph></entry><entry>Repository web URL.</entry></row>
+            <row><entry><codeph>zensical.git.branch</codeph></entry><entry>Checked-out branch</entry><entry>Branch used to build source links; detached checkouts link to the commit.</entry></row>
+            <row><entry><codeph>zensical.git.host</codeph></entry><entry>Guessed from URL</entry><entry>URL style: <codeph>github</codeph>, <codeph>gitlab</codeph>, <codeph>bitbucket</codeph>, <codeph>gitea</codeph>, or <codeph>azure</codeph>.</entry></row>
+            <row><entry><codeph>zensical.source.url-template</codeph></entry><entry>Preset URL</entry><entry>Full URL template for edit, and view unless the view template is set.</entry></row>
+            <row><entry><codeph>zensical.source.view-url-template</codeph></entry><entry>Preset URL</entry><entry>Full URL template for the view action.</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      <p>URL templates accept <codeph>{path}</codeph> (URL-encoded), <codeph>{raw_path}</codeph>, <codeph>{repo}</codeph>, <codeph>{branch}</codeph>, and <codeph>{topic_id}</codeph>. Unsafe characters in configured URLs are percent-encoded. Git view links open the hosting service's file view. Azure Repos has no direct edit URL, so both actions open the file view.</p>
+      <p>The plug-in enables Zensical's <codeph>content.action.edit</codeph> and <codeph>content.action.view</codeph> features to match the configured actions. It writes the partial to <filepath>out/overrides/partials/actions.html</filepath> and sets <codeph>custom_dir</codeph> when possible. If the custom directory points outside the output folder, copy the partial from <filepath>resources/overrides/partials/actions.html</filepath>.</p>
+    </section>
+  </conbody>
+</concept>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN" "reference.dtd">
+<reference id="extension-points">
+  <title>Extension points and limitations</title>
+  <shortdesc>Extend the interchange transformations or Python adapter, and account for the plug-in's navigation and preview behavior.</shortdesc>
+  <refbody>
+    <section id="extensions">
+      <title>Extension points</title>
+      <table frame="all">
+        <tgroup cols="2">
+          <thead><row><entry>Extension point</entry><entry>Use</entry></row></thead>
+          <tbody>
+            <row><entry><codeph>dita.xsl.interchange.topic</codeph></entry><entry>XSLT imported after <filepath>topic2interchangeImpl.xsl</filepath>. Override <codeph>z:page-metadata-extra</codeph> to add sidecar keys, or change another template that produces the topic fragment.</entry></row>
+            <row><entry><codeph>dita.xsl.interchange.map</codeph></entry><entry>XSLT imported after <filepath>map2interchangeImpl.xsl</filepath>. Override <codeph>z:site-metadata-extra</codeph> or navigation functions.</entry></row>
+            <row><entry><codeph>dita.xsl.html5</codeph></entry><entry>Regular HTML5 overrides, because topic fragments come from the HTML5 stylesheets.</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      <p>The interchange XSLT namespace is <codeph>urn:x-dita-interchange</codeph>, with prefix <codeph>z</codeph>. Stage 2 behavior is implemented in <filepath>python/dita_zensical</filepath>.</p>
+    </section>
+    <section id="navigation">
+      <title>Navigation behavior</title>
+      <p>The navigation model follows the DITA map. Topicheads and titled topicgroups become sections. A topicref with children becomes a section whose first entry is its own page. External links remain links. Refs with <codeph>toc="no"</codeph> and resource-only refs are omitted from navigation, although their pages are still built.</p>
+    </section>
+    <section id="limitations">
+      <title>Limitations</title>
+      <ul>
+        <li>Family links (parent, child, and sibling) are disabled with <codeph>args.rellinks=nofamily</codeph>, because the Zensical navigation and footer provide navigation. Relationship-table links remain available.</li>
+        <li><codeph>zensical serve</codeph> reloads theme and configuration changes. Re-run DITA-OT after editing DITA topics.</li>
+        <li>The plug-in ID is <codeph>com.redhat.zensical</codeph>. DITA-OT sets <codeph>dita.plugin.com.redhat.zensical.dir</codeph> to the installed plug-in directory.</li>
+      </ul>
+    </section>
+  </refbody>
+</reference>

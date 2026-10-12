@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN" "reference.dtd">
+<reference id="rendering">
+  <title>Page rendering and generated files</title>
+  <shortdesc>See how DITA topic content, theme styles, and generated output files are handled by the Python adapter and Zensical.</shortdesc>
+  <refbody>
+    <section id="topic-pages">
+      <title>Topic pages</title>
+      <ul>
+        <li>Page metadata becomes front matter for title, description, and keywords.</li>
+        <li>Section titles become Markdown headings with their DITA IDs. Zensical uses them for the page outline, permalinks, and section search results.</li>
+        <li>Wrappers that contain headings are removed. A section ID moves to its title or to an empty <codeph>div.dita-anchor</codeph>, so cross-references still have a target.</li>
+        <li>Other topic markup remains raw HTML, written as one block per line. Newlines inside <codeph>pre</codeph> elements become <codeph>&amp;#10;</codeph>.</li>
+        <li>Cross-page links become relative URLs for Zensical's directory-style routes. Local image paths are adjusted for those routes.</li>
+      </ul>
+      <p>Python-Markdown passes top-level raw HTML through without parsing it. The <codeph>md_in_html</codeph> extension parses nested HTML inside marked containers, which can change DITA task markup.</p>
+    </section>
+    <section id="theme-mapping">
+      <title>Theme mapping</title>
+      <ul>
+        <li>DITA notes become <codeph>div.admonition</codeph> elements with a note type and title.</li>
+        <li>DITA table classes are moved to <codeph>data-dita-class</codeph>, because the theme styles class-less tables.</li>
+        <li>The generated <filepath>stylesheets/dita.css</filepath> covers DITA classes that the theme does not style.</li>
+      </ul>
+    </section>
+    <section id="output-files">
+      <title>Output paths and cleanup</title>
+      <table frame="all">
+        <tgroup cols="2">
+          <thead><row><entry>Path</entry><entry>Contents</entry></row></thead>
+          <tbody>
+            <row><entry><filepath>out/interchange/</filepath></entry><entry>XHTML fragments, JSON metadata, and the map navigation model.</entry></row>
+            <row><entry><filepath>out/docs/</filepath></entry><entry>Markdown pages, images, and <filepath>stylesheets/dita.css</filepath>.</entry></row>
+            <row><entry><filepath>out/zensical.toml</filepath></entry><entry>Generated Zensical config or the supplied config with navigation added.</entry></row>
+            <row><entry><filepath>out/site/</filepath></entry><entry>The finished static site.</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      <p>At the start of a build, the plug-in removes <filepath>interchange/</filepath> or <filepath>docs/</filepath> only when that output directory contains the plug-in's <filepath>.dita-zensical</filepath> marker. If either path exists without the marker, the build stops instead of deleting files it does not own.</p>
+    </section>
+  </refbody>
+</reference>

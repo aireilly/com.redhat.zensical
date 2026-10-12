@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN" "reference.dtd">
+<reference id="configuration">
+  <title>Build parameters and configuration</title>
+  <shortdesc>Use DITA-OT parameters to control the build stages, site metadata, theme behavior, highlighting, and Python runtime.</shortdesc>
+  <refbody>
+    <section id="parameters">
+      <title>Plug-in parameters</title>
+      <table frame="all">
+        <title>Build parameters</title>
+        <tgroup cols="3">
+          <thead><row><entry>Parameter</entry><entry>Default</entry><entry>Purpose</entry></row></thead>
+          <tbody>
+            <row><entry><codeph>zensical.stage</codeph></entry><entry><codeph>site</codeph></entry><entry>Last build stage: <codeph>interchange</codeph>, <codeph>sources</codeph>, or <codeph>site</codeph>.</entry></row>
+            <row><entry><codeph>zensical.site.name</codeph></entry><entry>Map title</entry><entry>Sets the Zensical <codeph>site_name</codeph>.</entry></row>
+            <row><entry><codeph>zensical.site.url</codeph></entry><entry>Unset</entry><entry>Sets <codeph>site_url</codeph>, used for sitemaps and canonical links.</entry></row>
+            <row><entry><codeph>zensical.site.description</codeph></entry><entry>Map short description</entry><entry>Sets <codeph>site_description</codeph>.</entry></row>
+            <row><entry><codeph>zensical.repo.url</codeph></entry><entry>Unset</entry><entry>Sets the repository URL in the generated config.</entry></row>
+            <row><entry><codeph>zensical.config</codeph></entry><entry>Unset</entry><entry>Path to a custom <filepath>zensical.toml</filepath>.</entry></row>
+            <row><entry><codeph>zensical.home</codeph></entry><entry><codeph>generated</codeph></entry><entry>Generate <filepath>docs/index.md</filepath> from the map when no topic publishes as <codeph>index</codeph>, or set to <codeph>none</codeph> to skip it.</entry></row>
+            <row><entry><codeph>zensical.admonitions</codeph></entry><entry><codeph>yes</codeph></entry><entry>Render DITA notes as theme admonitions.</entry></row>
+            <row><entry><codeph>zensical.theme.tables</codeph></entry><entry><codeph>yes</codeph></entry><entry>Allow the theme to style DITA tables.</entry></row>
+            <row><entry><codeph>zensical.highlight</codeph></entry><entry><codeph>yes</codeph></entry><entry>Syntax-highlight codeblocks.</entry></row>
+            <row><entry><codeph>zensical.code.default-lang</codeph></entry><entry><codeph>text</codeph></entry><entry>Language for codeblocks without a <codeph>language-*</codeph> output class.</entry></row>
+            <row><entry><codeph>zensical.source.links</codeph></entry><entry><codeph>none</codeph></entry><entry>Show source actions that link to Git or AEM Guides.</entry></row>
+            <row><entry><codeph>zensical.python</codeph></entry><entry>Detected</entry><entry>Python interpreter that can import Zensical and its Markdown extensions.</entry></row>
+            <row><entry><codeph>zensical.strict</codeph></entry><entry><codeph>no</codeph></entry><entry>Pass <codeph>--strict</codeph> so Zensical warnings fail the build.</entry></row>
+            <row><entry><codeph>zensical.executable</codeph></entry><entry><codeph>zensical</codeph></entry><entry>Command used to run Zensical.</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      <p>Standard DITA-OT and HTML5 parameters also apply, including <codeph>--filter</codeph>, <codeph>args.draft</codeph>, and <codeph>args.gen.task.lbl</codeph>.</p>
+    </section>
+    <section id="custom-config">
+      <title>Use a custom Zensical configuration</title>
+      <p>Pass a TOML path with <codeph>-Dzensical.config=site.toml</codeph> to keep theme, palette, and extension settings under version control. Relative paths resolve from the directory where you run <codeph>dita</codeph>; absolute paths are accepted. The plug-in copies the config to <filepath>out/zensical.toml</filepath> and adds missing <codeph>site_name</codeph>, <codeph>extra_css</codeph>, and <codeph>nav</codeph> values.</p>
+      <p>Keep <codeph>attr_list</codeph> enabled when setting <codeph>markdown_extensions</codeph>. Generated headings use it to preserve DITA IDs. Code highlighting follows the configured <codeph>pymdownx.highlight</codeph> settings.</p>
+    </section>
+    <section id="python-runtime">
+      <title>Python interpreter selection</title>
+      <p>Stage 2 runs in the Python environment that provides Zensical, Python-Markdown, pymdownx, and Pygments. The plug-in checks these locations in order:</p>
+      <ol>
+        <li>The interpreter set with <codeph>zensical.python</codeph>.</li>
+        <li>A Python executable beside the <codeph>zensical</codeph> command, such as a virtual environment, pipx, or <codeph>uv tool</codeph> installation.</li>
+        <li>The interpreter in the <codeph>zensical</codeph> script's shebang.</li>
+        <li><codeph>python3</codeph>, <codeph>python</codeph>, or <codeph>py</codeph> on <codeph>PATH</codeph>.</li>
+      </ol>
+      <p>Stage 2 can also be run directly on interchange files:</p>
+      <codeblock outputclass="language-bash">python python/write_site.py --interchange out/interchange --docs out/docs --config out/zensical.toml</codeblock>
+    </section>
+  </refbody>
+</reference>

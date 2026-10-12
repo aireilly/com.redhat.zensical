@@ -19,7 +19,7 @@ jobs:
         run: >-
           zip -r com.redhat.zensical.zip
           plugin.xml build_zensical.xml conductor.xml
-          xsl python resources sample
+          xsl python resources docs
           README.md INTERCHANGE.md LICENSE
 
       - name: Create GitHub release

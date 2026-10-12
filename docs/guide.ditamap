@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN" "map.dtd">
+<map>
+  <title>DITA-OT Zensical plug-in documentation</title>
+  <topicref href="topics/overview.dita"/>
+  <topichead navtitle="Use the plug-in">
+    <topicref href="topics/getting-started.dita"/>
+    <topicref href="topics/configuration.dita"/>
+    <topicref href="topics/source-links.dita"/>
+    <topicref href="topics/code-blocks.dita"/>
+    <topicref href="topics/rendering.dita"/>
+    <topicref href="topics/extension-points.dita"/>
+  </topichead>
+</map>

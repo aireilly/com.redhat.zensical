@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task id="getting-started">
+  <title>Build and preview the documentation</title>
+  <shortdesc>Install the plug-in and its dependencies, build the documentation map, and preview the generated site.</shortdesc>
+  <taskbody>
+    <prereq>
+      <p>Use DITA-OT 4.x with Java 17 or later and Python 3.11 or later. Install the <codeph>zip</codeph> command to package the plug-in.</p>
+    </prereq>
+    <context>
+      <p>From a clone of this repository, package and install the plug-in. The GitHub release archive contains the same plug-in files.</p>
+    </context>
+    <steps>
+      <step>
+        <cmd>Package the plug-in from the repository root.</cmd>
+        <info>
+          <codeblock outputclass="language-bash">zip -r com.redhat.zensical.zip \
+  plugin.xml build_zensical.xml conductor.xml \
+  xsl python resources docs
+dita install com.redhat.zensical.zip</codeblock>
+        </info>
+      </step>
+      <step>
+        <cmd>Install Zensical in the Python environment that will run the build.</cmd>
+        <info><codeblock outputclass="language-bash">pip install zensical</codeblock></info>
+      </step>
+      <step>
+        <cmd>Build the documentation map with the checked-in site configuration.</cmd>
+        <info><codeblock outputclass="language-bash">dita -i docs/guide.ditamap -f zensical -o out -Dzensical.config=docs/zensical.toml</codeblock></info>
+      </step>
+      <step>
+        <cmd>Start the local preview server from the output directory.</cmd>
+        <info><codeblock outputclass="language-bash">cd out
+zensical serve --open</codeblock></info>
+      </step>
+    </steps>
+    <result>
+      <p>The preview is available at <xref href="http://localhost:8000" scope="external" format="html">http://localhost:8000</xref>. The deployable static site is in <filepath>out/site/</filepath>. While the server is running, rebuild the DITA map after editing topics; Zensical reloads the updated output.</p>
+    </result>
+  </taskbody>
+</task>

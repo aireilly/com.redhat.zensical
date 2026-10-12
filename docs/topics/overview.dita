@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "concept.dtd">
+<concept id="overview">
+  <title>About the DITA-OT Zensical plug-in</title>
+  <shortdesc>Publish a DITA map as a Zensical site through an interchange format that keeps DITA processing separate from site generation.</shortdesc>
+  <conbody>
+    <p>The plug-in transforms a DITA map into a static site. DITA-OT handles keys, conrefs, filtering, chunking, and topic processing. A Python adapter converts the result into Markdown pages and Zensical configuration, then Zensical builds the site.</p>
+    <section id="pipeline">
+      <title>Build stages</title>
+      <ol>
+        <li><b>Interchange:</b> DITA-OT writes XHTML5 topic fragments, JSON metadata, and a navigation model to <filepath>out/interchange/</filepath>. This stage does not depend on Zensical.</li>
+        <li><b>Sources:</b> the Python adapter writes Markdown pages, images, CSS, and <filepath>zensical.toml</filepath> under <filepath>out/docs/</filepath>.</li>
+        <li><b>Site:</b> Zensical turns those sources into the static site under <filepath>out/site/</filepath>.</li>
+      </ol>
+      <p>Set <codeph>zensical.stage</codeph> to <codeph>interchange</codeph> or <codeph>sources</codeph> to stop after an earlier stage. The default, <codeph>site</codeph>, runs all three stages.</p>
+      <p>The interchange file format is described in the repository's <filepath>INTERCHANGE.md</filepath>.</p>
+    </section>
+    <section id="html-output">
+      <title>HTML5 fragments serialized as XHTML</title>
+      <p>The plug-in uses DITA-OT's maintained HTML5 transformation for its vocabulary, including elements such as <codeph>section</codeph>, <codeph>figure</codeph>, and <codeph>nav</codeph>. It serializes each topic fragment as well-formed XHTML in the XHTML namespace. This lets the Python adapter use the standard XML parser while retaining the HTML5 structure.</p>
+    </section>
+    <section id="adapter">
+      <title>Python adapter modules</title>
+      <p>The Python package separates interchange loading, theme adaptation, highlighting, page writing, and configuration writing. The interchange, theme, and highlighting modules handle the build data and DITA presentation. The page and configuration writers adapt those results to Zensical. This split keeps the DITA processing independent from the final site generator.</p>
+    </section>
+    <section id="next-steps">
+      <title>Next steps</title>
+      <p>Follow <xref href="getting-started.dita">Build and preview the documentation</xref> to install the plug-in and generate a site. For options, see <xref href="configuration.dita">Build parameters and configuration</xref>.</p>
+    </section>
+  </conbody>
+</concept>
