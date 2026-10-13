@@ -9,6 +9,12 @@
   color: var(--md-default-fg-color--light);
 }
 
+/* API endpoint labels are prominent without adding entries to the page outline. */
+.md-typeset .api-endpoint {
+  font-size: 1.2em;
+  margin: 1.2em 0 .5em;
+}
+
 /* Inline semantics */
 .md-typeset .uicontrol,
 .md-typeset .wintitle { font-weight: 700; }
