@@ -154,8 +154,12 @@ def front_matter(meta: dict, extra: dict | None = None) -> str:
 
 
 def _rewrite_links(root, page_path, pages, assets):
-    """Rewrite page links and local image URLs for Zensical's directory-style page URLs."""
-    base = posixpath.dirname(page_path)
+    """Point page links at Zensical's directory-style page URLs, and local image URLs at the assets.
+
+    Both stay relative to the Markdown file that holds them, which is where
+    Zensical resolves them from before rebasing them onto the page URL.
+    """
+    base = posixpath.dirname(page_path) or "."
     for a in root.iter("a"):
         href = a.get("href")
         if not href or href.startswith(("#", "/")) or _SCHEME.match(href):
@@ -164,7 +168,7 @@ def _rewrite_links(root, page_path, pages, assets):
         target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
         if target in pages:
             target_route = _page_route(target)
-            relative = posixpath.relpath(target_route, start=_page_route(page_path))
+            relative = posixpath.relpath(target_route, start=base)
             relative = "./" if relative == "." else relative.rstrip("/") + "/"
             route_url = quote(relative, safe="/:@-._~!$&'()*+,;=")
             new_href = urlunsplit(("", "", route_url, url.query, url.fragment))
@@ -173,8 +177,6 @@ def _rewrite_links(root, page_path, pages, assets):
                 a.text = new_href  # DITA-OT's fallback text for an untitled target is the href
 
     asset_paths = set(assets)
-    # Non-index pages are served from an extra directory, such as /topics/overview/.
-    page_url_dir = _page_route(page_path)
     for image in root.iter("img"):
         src = image.get("src")
         if not src:
@@ -185,7 +187,7 @@ def _rewrite_links(root, page_path, pages, assets):
         target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
         if target not in asset_paths:
             continue
-        relative = posixpath.relpath(target, start=page_url_dir)
+        relative = posixpath.relpath(target, start=base)
         rewritten = urlunsplit((
             "", "", quote(relative, safe="/:@-._~!$&'()*+,;="), url.query, url.fragment
         ))
