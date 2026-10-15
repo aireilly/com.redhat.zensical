@@ -78,6 +78,9 @@ CSS_FINGERPRINT = hashlib.sha256(CSS_SOURCE.read_bytes()).hexdigest()[:12]
 CSS_FILENAME = "dita.{}.css".format(CSS_FINGERPRINT)
 CSS_ENTRY = 'extra_css = ["stylesheets/{}"]'.format(CSS_FILENAME)
 
+# Pages as other.html rather than other/, for hosts that serve no directory index
+DIRECTORY_URLS_OFF = "use_directory_urls = false"
+
 # Folder, relative to zensical.toml, that holds the page-action partial for source links
 OVERRIDES_DIR = "overrides"
 
@@ -124,7 +127,7 @@ def _entries(item) -> list[str]:
 
 
 def default_config(site_name, nav_block, *, description="", url="", repo_url="", language="en",
-                   source_actions=()) -> str:
+                   source_actions=(), directory_urls=True) -> str:
     lines = [HEADER, "[project]", "site_name = " + q(site_name)]
     if description:
         lines.append("site_description = " + q(description))
@@ -132,6 +135,8 @@ def default_config(site_name, nav_block, *, description="", url="", repo_url="",
         lines.append("site_url = " + q(url))
     if repo_url:
         lines.append("repo_url = " + q(repo_url))
+    if not directory_urls:
+        lines.append(DIRECTORY_URLS_OFF)
     lines += ['docs_dir = "docs"', 'site_dir = "site"', CSS_ENTRY, nav_block, "",
               THEME_AND_EXTENSIONS.format(
                   language=q(language),
@@ -140,8 +145,12 @@ def default_config(site_name, nav_block, *, description="", url="", repo_url="",
     return "\n".join(lines)
 
 
-def merge_user_config(text: str, site_name: str, nav_block: str) -> str:
-    """Add site_name, extra_css and nav under [project] when the user's file lacks them."""
+def merge_user_config(text: str, site_name: str, nav_block: str, directory_urls=True) -> str:
+    """Add site_name, extra_css and nav under [project] when the user's file lacks them.
+
+    With directory_urls false, also add use_directory_urls = false unless the
+    file sets use_directory_urls itself, in which case its value stands.
+    """
     inject = []
     if not re.search(r"^[ \t]*site_name[ \t]*=", text, re.M):
         inject.append("site_name = " + q(site_name))
@@ -149,6 +158,8 @@ def merge_user_config(text: str, site_name: str, nav_block: str) -> str:
         inject.append(CSS_ENTRY)
     if not re.search(r"^[ \t]*nav[ \t]*=", text, re.M):
         inject.append(nav_block)
+    if not directory_urls and not re.search(r"^[ \t]*use_directory_urls[ \t]*=", text, re.M):
+        inject.append(DIRECTORY_URLS_OFF)
     if not inject:
         return text
     block = "\n".join(inject)

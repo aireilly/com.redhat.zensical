@@ -8,7 +8,7 @@
     2. sources      python/dita_zensical adapter -> docs/**/*.md + zensical.toml
     3. site         zensical build -> site/
 -->
-<plugin id="com.redhat.zensical" version="0.6.9">
+<plugin id="com.redhat.zensical" version="0.7.0">
   <require plugin="org.dita.html5"/>
 
   <transtype name="zensical" extends="base-html" desc="Zensical documentation site">
@@ -26,6 +26,11 @@
            desc="Generate docs/index.md from the map when no topic is published as index.md.">
       <val default="true">generated</val>
       <val>none</val>
+    </param>
+    <param name="zensical.directory-urls" type="enum"
+           desc="Publish pages as other/ (yes) or other.html (no), for hosts that serve no directory index.">
+      <val default="true">yes</val>
+      <val>no</val>
     </param>
     <param name="zensical.admonitions" type="enum"
            desc="Render DITA notes as Zensical admonitions.">

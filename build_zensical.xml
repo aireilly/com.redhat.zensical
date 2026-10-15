@@ -42,6 +42,7 @@
 
     <property name="zensical.stage" value="site"/>
     <property name="zensical.home" value="generated"/>
+    <property name="zensical.directory-urls" value="yes"/>
     <property name="zensical.admonitions" value="yes"/>
     <property name="zensical.theme.tables" value="yes"/>
     <property name="zensical.highlight" value="yes"/>
@@ -129,6 +130,7 @@
       <arg value="--site-description" if:set="zensical.site.description"/> <arg value="${zensical.site.description}" if:set="zensical.site.description"/>
       <arg value="--repo-url" if:set="zensical.repo.url"/>         <arg value="${zensical.repo.url}" if:set="zensical.repo.url"/>
       <arg value="--home"/>             <arg value="${zensical.home}"/>
+      <arg value="--directory-urls"/>   <arg value="${zensical.directory-urls}"/>
       <arg value="--admonitions"/>      <arg value="${zensical.admonitions}"/>
       <arg value="--theme-tables"/>     <arg value="${zensical.theme.tables}"/>
       <arg value="--highlight"/>        <arg value="${zensical.highlight}"/>
