@@ -44,6 +44,7 @@ def main(argv=None):
     parser.add_argument("--site-description", default="")
     parser.add_argument("--repo-url", default="")
     parser.add_argument("--home", choices=("generated", "none"), default="generated")
+    parser.add_argument("--directory-urls", default="yes", help="no publishes pages as other.html")
     parser.add_argument("--admonitions", default="yes")
     parser.add_argument("--theme-tables", default="yes")
     parser.add_argument("--highlight", default="yes")
@@ -93,7 +94,8 @@ def main(argv=None):
     # zensical.toml first: the highlighter reads its pymdownx.highlight settings
     custom_dir = config.OVERRIDES_DIR
     if args.user_config:
-        toml = config.merge_user_config(args.user_config.read_text(encoding="utf-8"), site_name, nav_block)
+        toml = config.merge_user_config(args.user_config.read_text(encoding="utf-8"), site_name, nav_block,
+                                        directory_urls=yes(args.directory_urls))
         if actions:
             toml, custom_dir, notes = config.ensure_source_actions(toml, actions)
             warnings.extend(notes)
@@ -103,7 +105,7 @@ def main(argv=None):
             description=args.site_description or site.meta.get("description", ""),
             url=args.site_url, repo_url=args.repo_url,
             language=(site.meta.get("language") or "en").split("-")[0].lower(),
-            source_actions=actions)
+            source_actions=actions, directory_urls=yes(args.directory_urls))
     args.config.write_text(toml, encoding="utf-8")
     if actions:
         install_actions_partial(args.config.parent, custom_dir, args.overrides, warnings)

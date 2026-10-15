@@ -18,6 +18,7 @@
             <row><entry><codeph>zensical.repo.url</codeph></entry><entry>Unset</entry><entry>Sets the repository URL in the generated config.</entry></row>
             <row><entry><codeph>zensical.config</codeph></entry><entry>Unset</entry><entry>Path to a custom <filepath>zensical.toml</filepath>.</entry></row>
             <row><entry><codeph>zensical.home</codeph></entry><entry><codeph>generated</codeph></entry><entry>Generate <filepath>docs/index.md</filepath> from the map when no topic publishes as <codeph>index</codeph>, or set to <codeph>none</codeph> to skip it.</entry></row>
+            <row><entry><codeph>zensical.directory-urls</codeph></entry><entry><codeph>yes</codeph></entry><entry>Publish each page as <filepath>other/index.html</filepath>, linked as <codeph>other/</codeph>. Set to <codeph>no</codeph> to publish <filepath>other.html</filepath> instead, for hosts that do not serve a folder's <filepath>index.html</filepath>, such as a GitLab job artifact browser. Sets Zensical's <codeph>use_directory_urls</codeph>.</entry></row>
             <row><entry><codeph>zensical.admonitions</codeph></entry><entry><codeph>yes</codeph></entry><entry>Render DITA notes as theme admonitions.</entry></row>
             <row><entry><codeph>zensical.theme.tables</codeph></entry><entry><codeph>yes</codeph></entry><entry>Allow the theme to style DITA tables.</entry></row>
             <row><entry><codeph>zensical.highlight</codeph></entry><entry><codeph>yes</codeph></entry><entry>Syntax-highlight codeblocks.</entry></row>
@@ -33,7 +34,7 @@
     </section>
     <section id="custom-config">
       <title>Use a custom Zensical configuration</title>
-      <p>Pass a TOML path with <codeph>-Dzensical.config=site.toml</codeph> to keep theme, palette, and extension settings under version control. Relative paths resolve from the directory where you run <codeph>dita</codeph>; absolute paths are accepted. The plug-in copies the config to <filepath>out/zensical.toml</filepath> and adds missing <codeph>site_name</codeph>, <codeph>extra_css</codeph>, and <codeph>nav</codeph> values.</p>
+      <p>Pass a TOML path with <codeph>-Dzensical.config=site.toml</codeph> to keep theme, palette, and extension settings under version control. Relative paths resolve from the directory where you run <codeph>dita</codeph>; absolute paths are accepted. The plug-in copies the config to <filepath>out/zensical.toml</filepath> and adds missing <codeph>site_name</codeph>, <codeph>extra_css</codeph>, and <codeph>nav</codeph> values. A <codeph>use_directory_urls</codeph> value in the config takes precedence over <codeph>zensical.directory-urls</codeph>; cross-references follow either setting.</p>
       <p>Keep <codeph>attr_list</codeph> enabled when setting <codeph>markdown_extensions</codeph>. Generated headings use it to preserve DITA IDs. Code highlighting follows the configured <codeph>pymdownx.highlight</codeph> settings.</p>
     </section>
     <section id="python-runtime">

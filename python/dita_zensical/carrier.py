@@ -50,13 +50,6 @@ def markdown_path(page_path: str) -> str:
     return posixpath.splitext(page_path)[0] + ".md"
 
 
-def _page_route(page_path: str) -> str:
-    route = posixpath.splitext(page_path)[0]
-    if posixpath.basename(route) == "index":
-        route = posixpath.dirname(route)
-    return route or "."
-
-
 # ============ Page ============
 
 def page_markdown(page, site, options: Options, highlighter: highlight.Highlighter | None) -> str:
@@ -154,10 +147,11 @@ def front_matter(meta: dict, extra: dict | None = None) -> str:
 
 
 def _rewrite_links(root, page_path, pages, assets):
-    """Point page links at Zensical's directory-style page URLs, and local image URLs at the assets.
+    """Point page links at the target's Markdown file, and local image URLs at the assets.
 
-    Both stay relative to the Markdown file that holds them, which is where
-    Zensical resolves them from before rebasing them onto the page URL.
+    Both stay relative to the Markdown file that holds them. Zensical resolves
+    a link to a .md file in raw HTML as it does in Markdown, and turns it into
+    the page URL for the configured use_directory_urls: other/ or other.html.
     """
     base = posixpath.dirname(page_path) or "."
     for a in root.iter("a"):
@@ -167,14 +161,12 @@ def _rewrite_links(root, page_path, pages, assets):
         url = urlsplit(href)
         target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
         if target in pages:
-            target_route = _page_route(target)
-            relative = posixpath.relpath(target_route, start=base)
-            relative = "./" if relative == "." else relative.rstrip("/") + "/"
-            route_url = quote(relative, safe="/:@-._~!$&'()*+,;=")
-            new_href = urlunsplit(("", "", route_url, url.query, url.fragment))
-            a.set("href", new_href)
+            relative = posixpath.relpath(markdown_path(target), start=base)
+            md_url = quote(relative, safe="/:@-._~!$&'()*+,;=")
+            a.set("href", urlunsplit(("", "", md_url, url.query, url.fragment)))
             if len(a) == 0 and (a.text or "").strip() == href:
-                a.text = new_href  # DITA-OT's fallback text for an untitled target is the href
+                # DITA-OT's fallback text for an untitled target is the href
+                a.text = pages[target].title or href
 
     asset_paths = set(assets)
     for image in root.iter("img"):
