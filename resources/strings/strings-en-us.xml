@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Generated labels in Red Hat documentation style. These replace the DITA-OT
+  defaults, such as "Before you begin" and "Results", for every topic type.
+-->
+<variables>
+  <!-- Task sections, shown when args.gen.task.lbl is YES (the plug-in default) -->
+  <variable id="task_prereq">Prerequisites</variable>
+  <variable id="task_context">About this task</variable>
+  <variable id="task_procedure">Procedure</variable>
+  <variable id="task_procedure_unordered">Procedure</variable>
+  <variable id="task_results">Verification</variable>
+  <variable id="task_example">Example</variable>
+  <variable id="task_postreq">Next steps</variable>
+  <!-- Related links; the plug-in also puts every link type in one group -->
+  <variable id="Related information">Additional resources</variable>
+  <variable id="Related concepts">Additional resources</variable>
+  <variable id="Related tasks">Additional resources</variable>
+  <variable id="Related reference">Additional resources</variable>
+</variables>

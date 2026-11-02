@@ -30,7 +30,7 @@
           </tbody>
         </tgroup>
       </table>
-      <p>Standard DITA-OT and HTML5 parameters also apply, including <codeph>--filter</codeph>, <codeph>args.draft</codeph>, and <codeph>args.gen.task.lbl</codeph>.</p>
+      <p>Standard DITA-OT and HTML5 parameters also apply, including <codeph>--filter</codeph>, <codeph>args.draft</codeph>, and <codeph>args.gen.task.lbl</codeph>. The plug-in sets <codeph>args.gen.task.lbl</codeph> to <codeph>YES</codeph> by default. For more information about generated labels, see <xref href="rendering.dita#rendering/generated-labels"/>.</p>
     </section>
     <section id="custom-config">
       <title>Use a custom Zensical configuration</title>

@@ -16,7 +16,8 @@
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:z="urn:x-dita-interchange"
                 xmlns:dita="http://dita-ot.sourceforge.net"
-                exclude-result-prefixes="xs z dita">
+                xmlns:related-links="http://dita-ot.sourceforge.net/ns/200709/related-links"
+                exclude-result-prefixes="xs z dita related-links">
 
   <xsl:import href="plugin:org.dita.html5:xsl/dita2html5.xsl"/>
 
@@ -40,6 +41,29 @@
     <xsl:result-document href="{replace(string(current-output-uri()), '\.[^./]+$', '') || '.json'}" format="z:json">
       <xsl:sequence select="z:page-metadata(., $fragment)"/>
     </xsl:result-document>
+  </xsl:template>
+
+  <!-- ============ Related links: one list for every link type ============ -->
+
+  <!-- html5 splits related links into concept, task, and reference groups, each with its
+       own heading. Put every type in the untyped group, whose heading is "Related information"
+       (renamed "Additional resources" in resources/strings). -->
+  <xsl:template match="*[contains(@class, ' topic/link ')][@type = ('concept', 'task', 'reference')]"
+                mode="related-links:get-group" as="xs:string">
+    <xsl:call-template name="related-links:group."/>
+  </xsl:template>
+
+  <xsl:template match="*[contains(@class, ' topic/link ')][@type = ('concept', 'task', 'reference')]"
+                mode="related-links:get-group-priority" as="xs:integer">
+    <xsl:call-template name="related-links:group-priority."/>
+  </xsl:template>
+
+  <xsl:template match="*[contains(@class, ' topic/link ')][@type = ('concept', 'task', 'reference')]"
+                mode="related-links:result-group">
+    <xsl:param name="links" as="node()*"/>
+    <xsl:call-template name="related-links:group-result.">
+      <xsl:with-param name="links" select="$links"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- ============ Fragment: html5 output moved into the XHTML namespace ============ -->

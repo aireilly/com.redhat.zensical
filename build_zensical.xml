@@ -39,6 +39,8 @@
     <property name="html5.toc.generate" value="false"/>
     <property name="args.rellinks" value="nofamily"/>
     <property name="args.copycss" value="no"/>
+    <!-- Label task sections (Prerequisites, Procedure, Verification); pass NO to turn off -->
+    <property name="args.gen.task.lbl" value="YES"/>
 
     <property name="zensical.stage" value="site"/>
     <property name="zensical.home" value="generated"/>

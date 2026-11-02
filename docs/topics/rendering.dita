@@ -23,6 +23,26 @@
         <li>The generated DITA stylesheet covers DITA classes that the theme does not style.</li>
       </ul>
     </section>
+    <section id="generated-labels">
+      <title>Generated labels</title>
+      <p>The plug-in sets <codeph>args.gen.task.lbl</codeph> to <codeph>YES</codeph>, so task sections get headings, and it replaces the DITA-OT English labels with Red Hat ones. The labels come from <filepath>resources/strings/strings-en-us.xml</filepath>, which the plug-in registers through the <codeph>dita.xsl.strings</codeph> extension point.</p>
+      <table frame="all">
+        <tgroup cols="3">
+          <thead><row><entry>Element</entry><entry>DITA-OT label</entry><entry>Plug-in label</entry></row></thead>
+          <tbody>
+            <row><entry><codeph>prereq</codeph></entry><entry>Before you begin</entry><entry>Prerequisites</entry></row>
+            <row><entry><codeph>context</codeph></entry><entry>About this task</entry><entry>About this task</entry></row>
+            <row><entry><codeph>steps</codeph>, <codeph>steps-unordered</codeph></entry><entry>Procedure</entry><entry>Procedure</entry></row>
+            <row><entry><codeph>result</codeph></entry><entry>Results</entry><entry>Verification</entry></row>
+            <row><entry><codeph>example</codeph> in a task</entry><entry>Example</entry><entry>Example</entry></row>
+            <row><entry><codeph>postreq</codeph></entry><entry>What to do next</entry><entry>Next steps</entry></row>
+            <row><entry><codeph>related-links</codeph></entry><entry>Related concepts, Related tasks, Related reference, Related information</entry><entry>Additional resources</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      <p>DITA-OT groups related links by the type of the target topic and gives each group its own heading. The plug-in puts concept, task, and reference links in the untyped group, so each topic has one "Additional resources" list. Concept and reference topics generate no other section labels. Their section headings come from the section titles in the content.</p>
+      <p>To build without task labels, pass <codeph>-Dargs.gen.task.lbl=NO</codeph>.</p>
+    </section>
     <section id="output-files">
       <title>Output paths and cleanup</title>
       <table frame="all">
