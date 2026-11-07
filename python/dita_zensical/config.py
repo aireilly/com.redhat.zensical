@@ -106,6 +106,18 @@ def theme_icon(text: str, name: str, default: str) -> str:
     return icon if isinstance(icon, str) else default
 
 
+def directory_urls(text: str, default: bool = True) -> bool:
+    """The use_directory_urls value Zensical will read from the written config."""
+    if tomllib is not None:
+        try:
+            value = tomllib.loads(text).get("project", {}).get("use_directory_urls", default)
+        except tomllib.TOMLDecodeError:
+            value = default
+        return value if isinstance(value, bool) else default
+    match = re.search(r"^[ \t]*use_directory_urls[ \t]*=[ \t]*(true|false)", text, re.M)
+    return default if match is None else match.group(1) == "true"
+
+
 def nav_toml(nav, with_home: bool) -> str:
     entries = ([q("index.md")] if with_home else []) + [e for item in nav for e in _entries(item)]
     return "\n".join(["nav = ["] + ["  {},".format(e) for e in entries] + ["]"])

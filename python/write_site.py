@@ -124,7 +124,9 @@ def main(argv=None):
     options = carrier.Options(
         admonitions=yes(args.admonitions), theme_tables=yes(args.theme_tables),
         highlight=highlighter is not None, default_language=args.default_lang or "text",
-        source_links=links, edit_icon=edit_icon)
+        source_links=links, edit_icon=edit_icon,
+        # The written config decides: a user's use_directory_urls wins over the flag
+        directory_urls=config.directory_urls(toml, default=yes(args.directory_urls)))
 
     args.docs.mkdir(parents=True, exist_ok=True)
     count = carrier.write_pages(site, args.docs, options, highlighter, warn=warnings.append)

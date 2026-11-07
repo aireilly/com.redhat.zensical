@@ -37,24 +37,53 @@ _SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.\-]*:")
 
 class Options:
     def __init__(self, admonitions=True, theme_tables=True, highlight=True, default_language="text",
-                 source_links=None, edit_icon=None):
+                 source_links=None, edit_icon=None, directory_urls=True):
         self.admonitions = admonitions
         self.theme_tables = theme_tables
         self.highlight = highlight
         self.default_language = default_language
         self.source_links = source_links  # a source_links.SourceLinks, or None
         self.edit_icon = edit_icon
+        self.directory_urls = directory_urls
 
 
 def markdown_path(page_path: str) -> str:
     return posixpath.splitext(page_path)[0] + ".md"
 
 
+def page_url(page_path: str, directory_urls: bool) -> str:
+    """The URL path Zensical publishes a page at, relative to the site root.
+
+    other.html with directory URLs off; other/ with them on, and the folder
+    itself for an index page.
+    """
+    stem = posixpath.splitext(page_path)[0]
+    if not directory_urls:
+        return stem + ".html"
+    if posixpath.basename(stem) == "index":
+        stem = posixpath.dirname(stem)
+    return stem + "/" if stem else ""
+
+
+def _url_folder(page_path: str, directory_urls: bool) -> str:
+    """The folder a browser resolves the page's relative links from."""
+    url = page_url(page_path, directory_urls)
+    return url.rstrip("/") if url.endswith("/") or not url else posixpath.dirname(url)
+
+
+def _relative_url(target: str, start: str) -> str:
+    """target relative to the folder start, keeping a trailing slash."""
+    relative = posixpath.relpath(target.rstrip("/") or ".", start=start or ".")
+    if target.endswith("/") or not target:
+        relative = "./" if relative == "." else relative + "/"
+    return quote(relative, safe="/:@-._~!$&'()*+,;=")
+
+
 # ============ Page ============
 
 def page_markdown(page, site, options: Options, highlighter: highlight.Highlighter | None) -> str:
     root = theme.adapt(page.element(), admonitions=options.admonitions, tables=options.theme_tables)
-    _rewrite_links(root, page.path, site.pages, site.assets)
+    _rewrite_links(root, page.path, site.pages, site.assets, options.directory_urls)
     links = options.source_links
     if links is not None:
         _add_topic_edit_links(root, page, links, options.edit_icon)
@@ -146,14 +175,16 @@ def front_matter(meta: dict, extra: dict | None = None) -> str:
     return "\n".join(lines)
 
 
-def _rewrite_links(root, page_path, pages, assets):
-    """Point page links at the target's Markdown file, and local image URLs at the assets.
+def _rewrite_links(root, page_path, pages, assets, directory_urls=True):
+    """Point page links at the target's published URL, and local image URLs at the assets.
 
-    Both stay relative to the Markdown file that holds them. Zensical resolves
-    a link to a .md file in raw HTML as it does in Markdown, and turns it into
-    the page URL for the configured use_directory_urls: other/ or other.html.
+    Zensical rewrites links only in Markdown syntax, not in raw HTML, and the
+    page body is raw HTML. So each link is written as the browser needs it:
+    relative to the folder the page is served from, which is the page's own
+    folder with directory URLs on, and to the target's other/ or other.html.
     """
     base = posixpath.dirname(page_path) or "."
+    served = _url_folder(page_path, directory_urls)
     for a in root.iter("a"):
         href = a.get("href")
         if not href or href.startswith(("#", "/")) or _SCHEME.match(href):
@@ -161,9 +192,8 @@ def _rewrite_links(root, page_path, pages, assets):
         url = urlsplit(href)
         target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
         if target in pages:
-            relative = posixpath.relpath(markdown_path(target), start=base)
-            md_url = quote(relative, safe="/:@-._~!$&'()*+,;=")
-            a.set("href", urlunsplit(("", "", md_url, url.query, url.fragment)))
+            new_url = _relative_url(page_url(target, directory_urls), served)
+            a.set("href", urlunsplit(("", "", new_url, url.query, url.fragment)))
             if len(a) == 0 and (a.text or "").strip() == href:
                 # DITA-OT's fallback text for an untitled target is the href
                 a.text = pages[target].title or href
@@ -179,10 +209,7 @@ def _rewrite_links(root, page_path, pages, assets):
         target = posixpath.normpath(posixpath.join(base, unquote(url.path)))
         if target not in asset_paths:
             continue
-        relative = posixpath.relpath(target, start=base)
-        rewritten = urlunsplit((
-            "", "", quote(relative, safe="/:@-._~!$&'()*+,;="), url.query, url.fragment
-        ))
+        rewritten = urlunsplit(("", "", _relative_url(target, served), url.query, url.fragment))
         image.set("src", rewritten)
 
 
