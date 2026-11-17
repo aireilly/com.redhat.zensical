@@ -138,15 +138,34 @@ def _add_topic_edit_links(root, page, links, edit_icon):
             edit.text = "Edit"
 
 
-def load_theme_icon(name: str):
-    """Load a configured Zensical theme icon for use in generated HTML."""
+def _theme_icon_roots():
+    """Directories that may hold the theme's .icons, newest Zensical layout first.
+
+    Zensical 0.1 moved its theme into the zensical-ui package, found through
+    zensical_ui.get_theme_dir(). Earlier releases kept it in zensical/templates.
+    """
+    roots = []
+    try:
+        import zensical_ui
+        roots.append(pathlib.Path(zensical_ui.get_theme_dir()) / ".icons")
+    except (ImportError, AttributeError, OSError):
+        pass
     try:
         import zensical
+        roots.append(pathlib.Path(zensical.__file__).resolve().parent / "templates" / ".icons")
     except ImportError:
-        return None
-    icon_root = pathlib.Path(zensical.__file__).resolve().parent / "templates" / ".icons"
-    icon_path = (icon_root / (name + ".svg")).resolve()
-    if not icon_path.is_relative_to(icon_root.resolve()) or not icon_path.is_file():
+        pass
+    return roots
+
+
+def load_theme_icon(name: str):
+    """Load a configured Zensical theme icon for use in generated HTML."""
+    for icon_root in _theme_icon_roots():
+        icon_root = icon_root.resolve()
+        icon_path = (icon_root / (name + ".svg")).resolve()
+        if icon_path.is_relative_to(icon_root) and icon_path.is_file():
+            break
+    else:
         return None
     try:
         icon = ET.parse(icon_path).getroot()
